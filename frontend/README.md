@@ -1,12 +1,15 @@
-## Backend Apileri
-# Login Backend
-POST /auth/login
-Gidecek Veri
+# Backend API Dokümantasyonu
+## Login Backend
+**Endpoint:** `POST /auth/login`
+**Gidecek Veri (Body):**
+```json
 {
   "email": "ahmet@ornek.com",
   "password": "cokgizlisifre123"
 }
-Gelecek Veri
+```
+**Gelecek Veri:**
+```json
 {
   "success": true / false,
   "user": {
@@ -15,12 +18,15 @@ Gelecek Veri
     "isTechnician": true / false
   }
 }
-Gelecek Header
+```
+**Gelecek Veri (Header):**
+```
 Set-Cookie: access_token=xyz...;
-
-# Register Backend
+```
+## Register Backend
 POST /auth/register
-Gidecek Veri
+**Gidecek Veri (Body):**
+```json
 {
   "name": "Mehmet",
   "surname": "Demir",
@@ -30,7 +36,9 @@ Gidecek Veri
   "address": "Atatürk Mah. Çiçek Sok. No:5 İstanbul",
   "isTechnician": true
 }
-Gelecek Veri
+```
+**Gelecek Veri:**
+```json
 {
   "success": true / false,
    "user": {
@@ -39,12 +47,15 @@ Gelecek Veri
     "isTechnician": true / false
   }
 }
-
-# Cookie hala geçerli mi kontrol
+```
+## Cookie hala geçerli mi kontrol
 GET /auth/me
-Gidecek Veri
+**Gidecek Veri (Body):**
+```
 << BOŞ HEADER ile Cookie gönderilecek >>
-Gelecek Veri
+```
+**Gelecek Veri:**
+```json
 {
   "isAuthenticated": true,
    "user": {
@@ -53,16 +64,22 @@ Gelecek Veri
     "isTechnician": true / false
   }
 }
+```
 veya
+```json
 {
   "isAuthenticated": false
 }
-
-# Logout
+```
+## Logout
 POST /auth/logout
-Gidecek Veri
+**Gidecek Veri (Body):**
+```
 << BOŞ HEADER ile Cookie gönderilecek Cookie databasede devre dışı bırakılmalı>>
-Gelecek Veri
+```
+**Gelecek Veri:**
+```json
 {
   "success": true / false
 }
+```
