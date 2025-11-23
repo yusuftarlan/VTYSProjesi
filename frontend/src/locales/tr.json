@@ -1,0 +1,23 @@
+{
+    "login": {
+        "title": "Giriş Yap",
+        "email": "E-posta Adresi",
+        "password": "Şifre",
+        "submitButton": "Giriş Yap",
+        "toggleText": "Kayıtlı değil misiniz?",
+        "toggleLink": "Kayıt Olun"
+    },
+    "register": {
+        "title": "Kayıt Ol",
+        "name": "Ad",
+        "surname": "Soyad",
+        "email": "E-posta",
+        "password": "Şifre",
+        "phone": "Telefon Numarası",
+        "address": "Ev Adresi",
+        "technician": "Teknisyen misiniz?",
+        "submitButton": "Kayıt Ol",
+        "toggleText": "Zaten hesabınız var mı?",
+        "toggleLink": "Giriş Yap"
+    }
+}

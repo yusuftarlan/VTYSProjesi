@@ -1,0 +1,184 @@
+/* -- Renk Değişkenleri -- */
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --input-bg: #ffffff;
+    --input-border: #ddd;
+    --input-text: #000;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --button-bg: #4a90e2;
+    --button-hover: #357abd;
+}
+
+.dark-mode {
+    --bg-color: #18191a;
+    --card-bg: #242526;
+    --text-color: #e4e6eb;
+    --input-bg: #3a3b3c;
+    --input-border: #3e4042;
+    --input-text: #e4e6eb;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    /* Tam ekran yüksekliği */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    overflow: hidden;
+    /* Sayfanın kendisinde scroll olmasın */
+}
+
+/* --- Tema Butonu --- */
+.theme-toggle-btn {
+    position: absolute;
+    top: 2vh;
+    /* Üstten boşluk ekran yüksekliğine göre */
+    right: 2vh;
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 50%;
+    width: 5vh;
+    /* Buton boyutu yüksekliğe göre değişir */
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    color: var(--text-color);
+}
+
+.theme-toggle-btn svg {
+    width: 50%;
+    height: 50%;
+}
+
+/* --- Kart Tasarımı --- */
+.login-card {
+    background-color: var(--card-bg);
+    width: 90%;
+    max-width: 450px;
+
+    /* Yükseklik Ayarları (Scroll yok, ekranın max %95'i) */
+    max-height: 95vh;
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* İçeriği dikey ortala */
+
+    /* Padding'i yüksekliğe göre ayarla (ekran kısaldıkça boşluk azalır) */
+    padding: 3vh 3vw;
+
+    border-radius: 15px;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    /* KART İÇİNDE ASLA SCROLL ÇIKMAZ */
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 2vh;
+    /* Boşluk yüksekliğe göre */
+    /* Font boyutu: Ekran küçükse küçülür, büyükse büyür ama sınırlar içinde */
+    font-size: clamp(1.2rem, 3.5vh, 2rem);
+    color: var(--text-color);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    /* Elemanlar arası boşluk ekran yüksekliğine (vh) bağlı */
+    gap: 1.5vh;
+}
+
+.form-input {
+    width: 100%;
+    /* Input yüksekliği ve iç boşluğu ekrana göre değişir */
+    padding: 1.2vh 1.5vh;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-radius: 8px;
+
+    /* Font boyutu da yüksekliğe göre değişsin */
+    font-size: clamp(0.8rem, 2vh, 1rem);
+
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+/* Textarea için özel ayar */
+textarea.form-input {
+    resize: none;
+    height: 6vh;
+    /* Sabit yükseklik yerine vh */
+}
+
+.form-input:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+/* Checkbox Alanı */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 1vh;
+    margin: 0.5vh 0;
+    font-size: clamp(0.7rem, 1.8vh, 1rem);
+}
+
+.checkbox-group input {
+    width: 2vh;
+    height: 2vh;
+    cursor: pointer;
+}
+
+/* Buton */
+.submit-btn {
+    width: 100%;
+    padding: 1.5vh;
+    /* Buton yüksekliği dinamik */
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 8px;
+
+    font-size: clamp(0.9rem, 2vh, 1.1rem);
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1vh;
+}
+
+.toggle-container {
+    text-align: center;
+    margin-top: 2vh;
+    font-size: clamp(0.75rem, 1.8vh, 1rem);
+    /* Font küçülür */
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: #4a90e2;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 5px;
+    text-decoration: underline;
+    font-size: inherit;
+    /* Üstteki font boyutunu alır */
+}
