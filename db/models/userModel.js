@@ -13,27 +13,33 @@ export async function createUser(
     address,
     role_id
 ) {
-    const [rows] = await pool.query(
+    const [result] = await pool.query(
         `INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
         values(?, ?, ?, ?, ?, ?, ?)`,
         [f_name, s_name, email, passwd, tel_no, address, role_id]
     );
-    pool.end();
-    return rows;
+    // Insert işleminden sonra yeni eklenen ID'yi döndürelim
+    return result.insertId;
+}
+
+// E-posta adresine göre kullanıcıyı getirir (Login için gerekli)
+export async function getUserByEmail(email) {
+    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
+    return rows[0]; // Tek bir kullanıcı veya undefined döner
+}
+
+// ID'ye göre kullanıcı getirir
+export async function getUserByID(id) {
+    const [rows] = await pool.query("SELECT * FROM users WHERE id=?", [id]);
+    return rows[0];
 }
 //Users tablosundaki bütün kayıtları getirir
 export async function getAllUsers() {
     const [rows] = await pool.query("SELECT * FROM users");
-    pool.end();
+    
     return rows;
 }
 
-//Users tablosundan bir kişiyi id numarası ile getirir
-export async function getUserByID(id) {
-    const [rows] = await pool.query("SELECT * FROM users WHERE id=?", id);
-    pool.end();
-    return rows;
-}
 
 //Users tablosundan role_id parametresi ile kişileri getirir
 export async function getUserByRoleID(role_id) {
@@ -41,7 +47,7 @@ export async function getUserByRoleID(role_id) {
         "SELECT * FROM users WHERE role_id=?",
         [role_id]
     );
-    pool.end();
+   
     return rows;
 }
 
@@ -51,6 +57,6 @@ export async function getUsersNoAnyRequest() {
         `SELECT * FROM users AS u WHERE NOT EXISTS (SELECT * FROM service_requests as s 
         WHERE s.customer_id = u.id )`
     );
-    pool.end();
+   
     return rows;
 }

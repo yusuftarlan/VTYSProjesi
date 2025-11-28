@@ -1,17 +1,18 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { fakeApi } from '../services/fakeApi';
+// fakeApi yerine yeni yazdığımız authService'i import ediyoruz
+import { authService } from '../services/authService'; 
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Uygulama ilk açıldığında kontrol ediliyor mu?
+    const [loading, setLoading] = useState(true);
 
-    // Sayfa yenilenince oturumu kontrol et (GET /auth/me)
+    // Sayfa yenilenince oturumu kontrol et (Backend'e sor)
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const response = await fakeApi.me();
+                const response = await authService.me();
                 if (response.isAuthenticated) {
                     setUser(response.user);
                 } else {
@@ -27,21 +28,29 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const response = await fakeApi.login(email, password);
-        if (response.success) {
-            setUser(response.user);
-            return true;
+        try {
+            const response = await authService.login(email, password);
+            if (response.success) {
+                setUser(response.user);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            throw error; // Hatayı Login ekranına fırlat (orada ekrana yazdırırız)
         }
-        return false;
     };
 
     const register = async (formData) => {
-        const response = await fakeApi.register(formData);
-        return response.success;
+        try {
+            const response = await authService.register(formData);
+            return response.success;
+        } catch (error) {
+            throw error;
+        }
     };
 
     const logout = async () => {
-        await fakeApi.logout();
+        await authService.logout();
         setUser(null);
     };
 

@@ -12,6 +12,6 @@ export async function getProductNameByServieID(serviceRequest_id) {
         WHERE s.id = ?;`,
         [serviceRequest_id]
     );
-    pool.end();
+    
     return rows;
 }

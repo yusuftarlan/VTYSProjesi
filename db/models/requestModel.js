@@ -9,7 +9,7 @@ export async function createRequest(customer_id, technician_id, model_id) {
         values(?, ?, ?, 1)`,
         [customer_id, technician_id, model_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -19,7 +19,7 @@ export async function setRequestPrice(request_id, price) {
         `UPDATE request_details SET price = ? WHERE request_id = ?`,
         [price, request_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -29,7 +29,7 @@ export async function setRequestStatus_DEALOK(request_id) {
         `UPDATE service_requests SET request_status_id = 2 WHERE id = ?`,
         [request_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -39,7 +39,7 @@ export async function setRequestStatus_COMPLETED(request_id) {
         `UPDATE service_requests SET request_status_id = 3 WHERE id = ?`,
         [request_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -49,7 +49,7 @@ export async function setServiceScore(request_id, score) {
         `UPDATE service_requests SET service_score = ? WHERE id = ?`,
         [score, request_id]
     );
-    pool.end();
+   
     return rows;
 }
 
@@ -60,7 +60,7 @@ export async function getRequestDetailByID(request_id) {
         WHERE request_id = ?`,
         [request_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -71,7 +71,7 @@ export async function getAllRequestsByCustomerID(customer_id) {
         WHERE customer_id = ?`,
         [customer_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -82,7 +82,7 @@ export async function getAllRequestsByTechnicianID(tech_id) {
         WHERE technician_id = ?`,
         [tech_id]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -96,6 +96,6 @@ export async function getRequestStatuByID(serviceRequest_id) {
         rs.id WHERE s.id = ?`,
         [serviceRequest_id]
     );
-    pool.end();
+    
     return rows;
 }

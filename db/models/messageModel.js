@@ -9,6 +9,6 @@ export async function getAllMessagesByServiceId(serviceRequest_id) {
         WHERE service_requests.id = ?`,
         [serviceRequest_id]
     );
-    pool.end();
+    
     return result;
 }

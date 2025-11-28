@@ -16,7 +16,7 @@ export async function createTechnicianDetail(
         VALUES (?, ?, ?, ?, ?))`,
         [tech_id, profession, tech_score, experience_years, availability_status]
     );
-    pool.end();
+    
     return rows;
 }
 
@@ -26,7 +26,7 @@ export async function getTechnicianDetailByID(tech_id) {
         `SELECT * FROM technician_details WHERE technician_id = ?`,
         tech_id
     );
-    pool.end();
+    
     return result;
 }
 
@@ -35,7 +35,7 @@ export async function setTechnicianAvailable(id) {
         `UPDATE technician_details SET availability_status=1 WHERE technician_id=?`,
         [id]
     );
-    pool.end();
+    
     return result;
 }
 
@@ -44,7 +44,7 @@ export async function setTechnicianNotAvailable(id) {
         `UPDATE technician_details SET availability_status=0 WHERE technician_id=?`,
         [id]
     );
-    pool.end();
+    
     return result;
 }
 
@@ -56,7 +56,7 @@ export async function setTechnicianScore(tech_id, score) {
         `UPDATE technician_details SET technician_score=? WHERE technician_id=?`,
         [score, tech_id]
     );
-    pool.end();
+    
     return result;
 }
 export async function updateTechnicianScore(tech_id) {
@@ -66,7 +66,7 @@ export async function updateTechnicianScore(tech_id) {
         WHERE s.technician_id = t.technician_id) WHERE t.technician_id = ?`,
         [tech_id]
     );
-    pool.end();
+   
     return result;
 }
 
@@ -80,7 +80,7 @@ export async function getAllTechniciansServiceCount() {
             s.technician_id = t.technician_id
             GROUP BY t.technician_id`
     );
-    pool.end();
+  
     return result;
 }
 //Bir alandaki ustaları puanlarına göre sıralayarak döndürür
@@ -95,7 +95,7 @@ export async function getTechniciansScoreByProfession(profession) {
         t.technician_score DESC `,
         [profession]
     );
-    pool.end();
+    
     return result;
 }
 
@@ -112,7 +112,7 @@ export async function getTechniciansExpYearByProfession(profession) {
         DESC`,
         [profession]
     );
-    pool.end();
+   
     return result;
 }
 
@@ -125,6 +125,6 @@ export async function getAllTechniciansTenTimesGetComplained() {
         GROUP BY sr.technician_id, u.first_name, u.surname
         HAVING COUNT(c.id) > 10;`
     );
-    pool.end();
+    
     return result;
 }
