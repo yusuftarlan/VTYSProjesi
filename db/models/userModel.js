@@ -39,7 +39,17 @@ export async function getUserByID(id) {
 export async function getUserByRoleID(role_id) {
     const [rows] = await pool.query(
         "SELECT * FROM users WHERE role_id=?",
-        role_id
+        [role_id]
+    );
+    pool.end();
+    return rows;
+}
+
+//Hiç servis talebinde bulunmamış kullanıcıları getirir
+export async function getUsersNoAnyRequest() {
+    const [rows] = await pool.query(
+        `SELECT * FROM users AS u WHERE NOT EXISTS (SELECT * FROM service_requests as s 
+        WHERE s.customer_id = u.id )`
     );
     pool.end();
     return rows;
