@@ -85,3 +85,17 @@ export async function getAllRequestsByTechnicianID(tech_id) {
     pool.end();
     return rows;
 }
+
+//Servi talep durumunu getirir
+export async function getRequestStatuByID(serviceRequest_id) {
+    const [rows] = await pool.query(
+        `SELECT rs.name FROM
+        service_requests as s JOIN
+        request_statuses as rs
+        ON s.request_status_id =
+        rs.id WHERE s.id = ?`,
+        [serviceRequest_id]
+    );
+    pool.end();
+    return rows;
+}
