@@ -14,6 +14,15 @@ const getMockDB = () => {
     }
 };
 
+const getMockDetails = () => {
+    const localData = localStorage.getItem('mock_db_details');
+    if (localData) return JSON.parse(localData);
+    // İlk açılışta JSON'dan al
+    localStorage.setItem('mock_db_details', JSON.stringify(fakeDb.technician_details));
+    return fakeDb.technician_details;
+};
+const saveMockDetails = (details) => localStorage.setItem('mock_db_details', JSON.stringify(details));
+
 const saveMockDB = (users) => {
     localStorage.setItem('mock_db_users', JSON.stringify(users));
 };
@@ -59,50 +68,50 @@ export const authService = {
 
     // 2. REGISTER
     register: async (formData) => {
-        // --- DEV MODU (SUNUCUSUZ) ---
         if (IS_DEV) {
-            console.log("🟡 Dev Mode: Register Simulation");
+            console.log("🟡 Dev Mode: Register");
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            const users = getMockDB();
+            const users = getMockUsers();
 
-            // E-posta kontrolü
             if (users.find(u => u.email === formData.email)) {
-                throw new Error('Bu e-posta zaten kayıtlı. (Dev Mode)');
+                throw new Error('Bu e-posta zaten kayıtlı.');
             }
 
-            // Yeni ID oluştur (En büyük ID + 1)
             const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
-
-            // Rol belirleme
             const role_id = formData.isTechnician ? 1 : 2;
 
+            // User tablosuna ekle
             const newUser = {
                 id: newId,
                 first_name: formData.name,
                 surname: formData.surname || "",
                 email: formData.email,
-                passwd: formData.password, // Şifrelemeden saklıyoruz
+                passwd: formData.password,
                 tel_no: formData.phone,
                 home_address: formData.address,
                 role_id: role_id
             };
-
-            // Listeye ekle ve kaydet
             users.push(newUser);
-            saveMockDB(users);
+            saveMockUsers(users);
 
-            return {
-                success: true,
-                user: {
-                    id: newUser.id,
-                    name: newUser.first_name,
-                    isTechnician: role_id === 1
-                }
-            };
+            // EĞER TEKNİSYENSE DETAY TABLOSUNA EKLE (YENİ)
+            if (role_id === 1) {
+                const details = getMockDetails();
+                details.push({
+                    technician_id: newId,
+                    profession: formData.profession || "Genel Teknisyen",
+                    technician_score: 0, // Yeni başlayan 0 puan
+                    experience_years: parseInt(formData.experienceYears) || 0,
+                    availability_status: true // Varsayılan müsait
+                });
+                saveMockDetails(details);
+            }
+
+            return { success: true };
         }
 
-        // --- PRODUCTION MODU (BACKEND) ---
+        // Prod
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -157,6 +166,7 @@ export const authService = {
         return { success: true };
     },
 
+    // 5. GET TECHNICIANS
     getTechnicians: async (filters = {}) => {
         // filters: { q, minExp, maxExp, city, minScore, onlyAvailable }
 
@@ -182,8 +192,7 @@ export const authService = {
                 const q = filters.q.toLowerCase();
                 techs = techs.filter(t =>
                     t.first_name.toLowerCase().includes(q) ||
-                    t.surname.toLowerCase().includes(q) ||
-                    (t.profession && t.profession.toLowerCase().includes(q))
+                    t.surname.toLowerCase().includes(q)
                 );
             }
 
@@ -213,6 +222,18 @@ export const authService = {
         const params = new URLSearchParams(filters);
         const response = await fetch(`${API_URL}/api/technicians?${params.toString()}`);
         if (!response.ok) throw new Error('Veri çekilemedi');
+        return await response.json();
+    },
+
+    // 6. GET PRODUCT TYPES
+    getProfessions: async () => {
+        if (IS_DEV) {
+            // Fake DB'deki "products" tablosunu döndür
+            const details = fakeDb.technician_details || [];
+            const uniqueProfessions = [...new Set(details.map(d => d.profession))];
+            return uniqueProfessions.sort();
+        }
+        const response = await fetch(`${API_URL}/api/products`);
         return await response.json();
     }
 };

@@ -16,12 +16,15 @@
         "phone": "Telefon Numarası",
         "address": "Ev Adresi",
         "technician": "Teknisyen misiniz?",
+        "profession": "Uzmanlık Alanı",
+        "experienceYears": "Deneyim Süresi (Yıl)",
         "submitButton": "Kayıt Ol",
         "toggleText": "Zaten hesabınız var mı?",
         "toggleLink": "Giriş Yap"
     },
     "home": {
         "title": "Teknik Servis Bul",
+        "logout": "Çıkış Yap",
         "searchPlaceholder": "Usta ismi, uzmanlık alanı ara (örn: Klima)",
         "searchButton": "Ara",
         "filters": {

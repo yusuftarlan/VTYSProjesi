@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../services/authService';
 import './Login.css';
 
 const LoginScreen = () => {
@@ -12,9 +13,11 @@ const LoginScreen = () => {
     const [theme, setTheme] = useState('dark');
     const [isLoginView, setIsLoginView] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
+    const [professionList, setProfessionList] = useState([]);
 
     const [formData, setFormData] = useState({
-        email: '', password: '', name: '', surname: '', phone: '', address: '', isTechnician: false
+        email: '', password: '', name: '', surname: '', phone: '', address: '', isTechnician: false, profession: '',
+        experienceYears: ''
     });
 
     const toggleTheme = () => {
@@ -45,6 +48,25 @@ const LoginScreen = () => {
             setErrorMsg(error.message || "Bir hata oluştu.");
         }
     };
+
+    // Sayfa yüklendiğinde uzmanlık alanlarını çek
+    useEffect(() => {
+        const fetchProfessions = async () => {
+            try {
+                // getProductTypes yerine getProfessions kullanıyoruz
+                const profs = await authService.getProfessions();
+                if (Array.isArray(profs)) {
+                    setProfessionList(profs);
+                } else {
+                    setProfessionList([]);
+                }
+            } catch (err) {
+                console.error("Meslekler çekilemedi", err);
+                setProfessionList([]);
+            }
+        };
+        fetchProfessions();
+    }, []);
 
     return (
         <div className={`login-page ${theme === 'dark' ? 'dark-mode' : ''}`}>
@@ -89,6 +111,39 @@ const LoginScreen = () => {
                                 <input type="checkbox" name="isTechnician" id="techCheck" checked={formData.isTechnician} onChange={handleChange} />
                                 <label htmlFor="techCheck">{t('register.technician')}</label>
                             </div>
+
+                            {formData.isTechnician && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5vh', marginTop: '0.5vh', marginBottom: '0.5vh', borderLeft: '3px solid #4a90e2', paddingLeft: '10px' }}>
+
+                                    {/* DROPDOWN (SELECT) */}
+                                    <select
+                                        name="profession"
+                                        className="form-input"
+                                        onChange={handleChange}
+                                        required
+                                        value={formData.profession}
+                                    >
+                                        <option value="">{t('register.profession') || "Uzmanlık Seçiniz"}</option>
+
+                                        {/* professionList artık string array olduğu için doğrudan map ediyoruz */}
+                                        {professionList.map((prof, index) => (
+                                            <option key={index} value={prof}>
+                                                {prof}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    <input
+                                        type="number"
+                                        name="experienceYears"
+                                        placeholder={t('register.experienceYears')}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                        required
+                                        min="0"
+                                    />
+                                </div>
+                            )}
                         </>
                     )}
 

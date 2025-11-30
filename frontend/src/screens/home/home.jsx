@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import './Home.css';
 
 const HomeScreen = () => {
     // Çeviri kütüphanesini başlatıyoruz
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const [theme, setTheme] = useState('dark');
     const [searchQuery, setSearchQuery] = useState("");
@@ -16,18 +18,30 @@ const HomeScreen = () => {
         maxExp: "",
         city: "",
         minScore: "",
-        onlyAvailable: false
+        onlyAvailable: false,
+        profession: ""
     });
 
     const [technicians, setTechnicians] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Şehir listesi
+    // Listeler
+    const [professionList, setProfessionList] = useState([]);
     const cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Adana"];
 
     // Tema
     const toggleTheme = () => {
         setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+    };
+
+    // Çıkış yap
+    const handleLogout = async () => {
+        try {
+            await authService.logout();
+            navigate('/login'); // Giriş sayfasına yönlendir (Route'un '/login' olduğunu varsayıyorum)
+        } catch (error) {
+            console.error("Çıkış yapılırken hata:", error);
+        }
     };
 
     // Araama işlemi
@@ -40,7 +54,8 @@ const HomeScreen = () => {
                 maxExp: filters.maxExp,
                 city: filters.city,
                 minScore: filters.minScore,
-                onlyAvailable: filters.onlyAvailable
+                onlyAvailable: filters.onlyAvailable,
+                profession: filters.profession
             });
             setTechnicians(data);
         } catch (error) {
@@ -64,18 +79,48 @@ const HomeScreen = () => {
         setFilters({ ...filters, [e.target.name]: value });
     };
 
+    // Sayfa ile uzmanlıkları yükle
+    useEffect(() => {
+        const initData = async () => {
+            // 1. Ustaları Çek
+            fetchTechnicians();
+
+            // 2. Uzmanlık Listesini Çek
+            try {
+                const profs = await authService.getProfessions();
+                if (Array.isArray(profs)) setProfessionList(profs);
+            } catch (err) {
+                console.error("Meslekler çekilemedi", err);
+            }
+        };
+        initData();
+    }, []);
+
     return (
         <div className={`home-page ${theme === 'dark' ? 'dark-mode' : ''}`}>
 
             <header className="home-header">
                 <h1 className="home-title">{t('home.title')}</h1>
-                <button onClick={toggleTheme} className="theme-btn-fixed" title="Temayı Değiştir">
-                    {theme === 'light' ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    )}
-                </button>
+                <div className="header-actions">
+
+                    {/* Tema Butonu */}
+                    <button onClick={toggleTheme} className="theme-btn-fixed" title="Temayı Değiştir">
+                        {theme === 'light' ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        )}
+                    </button>
+
+                    {/* Çıkış Yap Butonu */}
+                    <button onClick={handleLogout} className="theme-btn-fixed" title={t('home.logout')} style={{ color: '#ff4d4d', borderColor: '#ff4d4d' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
             </header>
 
             <section className="search-container">
@@ -92,6 +137,23 @@ const HomeScreen = () => {
                     </div>
 
                     <div className="filters-wrapper">
+
+                        {/* Uzmanlık Alanı Filtresi (Dropdown) */}
+                        <div className="filter-group">
+                            <span className="filter-label">Uzmanlık:</span>
+                            <select
+                                name="profession"
+                                className="filter-select"
+                                value={filters.profession}
+                                onChange={handleFilterChange}
+                                style={{ minWidth: '150px' }}
+                            >
+                                <option value="">Tümü</option>
+                                {professionList.map((prof, idx) => (
+                                    <option key={idx} value={prof}>{prof}</option>
+                                ))}
+                            </select>
+                        </div>
 
                         {/* Deneyim Filtresi */}
                         <div className="filter-group">

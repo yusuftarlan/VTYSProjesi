@@ -231,3 +231,9 @@
     color: var(--text-color);
     box-shadow: 0 2px 5px var(--shadow-color);
 }
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
