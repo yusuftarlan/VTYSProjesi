@@ -108,6 +108,54 @@ export async function getTechniciansScoreByProfession(profession) {
     return result;
 }
 
+//Puanı input skordan yüksek tüm ustaların bilgilerini getirir
+export async function getTechniciansExpYearByGreaterScore(score) {
+    const [result] = await pool.query(
+        `SELECT *
+        FROM technician_details as t
+        JOIN users AS u
+        ON t.technician_id = u.id WHERE
+        t.technician_score > ? ORDER BY t.
+        experience_years
+        DESC`,
+        [score]
+    );
+
+    return result;
+}
+
+//Puanı input skordan küçük tüm ustaların bilgilerini getirir
+export async function getTechniciansByLessScore(score) {
+    const [result] = await pool.query(
+        `SELECT *
+        FROM technician_details as t
+        JOIN users AS u
+        ON t.technician_id = u.id WHERE
+        t.technician_score < ? ORDER BY t.
+        experience_years
+        DESC`,
+        [score]
+    );
+
+    return result;
+}
+
+//İsme göre usta-arama fonksiyonu
+export async function getTechniciansByName(word) {
+    const [result] = await pool.query(
+        `SELECT *
+        FROM technician_details as t
+        JOIN users AS u
+        ON t.technician_id = u.id WHERE
+        (u.first_name || ' ' || u.surname) LIKE '?%'; ORDER BY t.
+        experience_years
+        DESC`,
+        [word]
+    );
+
+    return result;
+}
+
 //Bir alandaki ustaları deneyimlerine göre sıralayarak döndürür
 export async function getTechniciansExpYearByProfession(profession) {
     const [result] = await pool.query(
