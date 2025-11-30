@@ -25,7 +25,7 @@
     "home": {
         "title": "Teknik Servis Bul",
         "logout": "Çıkış Yap",
-        "searchPlaceholder": "Usta ismi, uzmanlık alanı ara (örn: Klima)",
+        "searchPlaceholder": "Usta ara",
         "searchButton": "Ara",
         "filters": {
             "experience": "Deneyim",
