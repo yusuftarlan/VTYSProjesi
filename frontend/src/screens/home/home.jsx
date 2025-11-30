@@ -1,39 +1,210 @@
-import React from 'react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { authService } from '../../services/authService';
+import './Home.css';
 
-const Home = () => {
-    const { user, logout } = useAuth();
+const HomeScreen = () => {
+    // Çeviri kütüphanesini başlatıyoruz
+    const { t } = useTranslation();
 
-    const containerStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: 'white'
+    const [theme, setTheme] = useState('dark');
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Filtreleme koşulları
+    const [filters, setFilters] = useState({
+        minExp: "",
+        maxExp: "",
+        city: "",
+        minScore: "",
+        onlyAvailable: false
+    });
+
+    const [technicians, setTechnicians] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    // Şehir listesi
+    const cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Adana"];
+
+    // Tema
+    const toggleTheme = () => {
+        setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
     };
 
-    const buttonStyle = {
-        marginTop: '20px',
-        padding: '10px 20px',
-        backgroundColor: '#ff4d4d',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontSize: '16px'
+    // Araama işlemi
+    const fetchTechnicians = async () => {
+        setLoading(true);
+        try {
+            const data = await authService.getTechnicians({
+                q: searchQuery,
+                minExp: filters.minExp,
+                maxExp: filters.maxExp,
+                city: filters.city,
+                minScore: filters.minScore,
+                onlyAvailable: filters.onlyAvailable
+            });
+            setTechnicians(data);
+        } catch (error) {
+            console.error("Hata:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTechnicians();
+    }, []);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        fetchTechnicians();
+    };
+
+    const handleFilterChange = (e) => {
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        setFilters({ ...filters, [e.target.name]: value });
     };
 
     return (
-        <div style={containerStyle}>
-            <h1>Hoşgeldin, {user?.name}</h1>
-            <p>{user?.isTechnician ? "Teknisyen Hesabı" : "Kullanıcı Hesabı"}</p>
+        <div className={`home-page ${theme === 'dark' ? 'dark-mode' : ''}`}>
 
-            <button onClick={logout} style={buttonStyle}>
-                Çıkış Yap (Logout)
-            </button>
+            <header className="home-header">
+                <h1 className="home-title">{t('home.title')}</h1>
+                <button onClick={toggleTheme} className="theme-btn-fixed" title="Temayı Değiştir">
+                    {theme === 'light' ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    )}
+                </button>
+            </header>
+
+            <section className="search-container">
+                <form onSubmit={handleSearch}>
+                    <div className="search-bar-wrapper">
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder={t('home.searchPlaceholder')}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <button type="submit" className="search-btn">{t('home.searchButton')}</button>
+                    </div>
+
+                    <div className="filters-wrapper">
+
+                        {/* Deneyim Filtresi */}
+                        <div className="filter-group">
+                            <span className="filter-label">{t('home.filters.experience')}:</span>
+                            <input
+                                type="number"
+                                name="minExp"
+                                placeholder={t('home.filters.min')}
+                                className="filter-input-small"
+                                value={filters.minExp}
+                                onChange={handleFilterChange}
+                            />
+                            <span className="filter-label">-</span>
+                            <input
+                                type="number"
+                                name="maxExp"
+                                placeholder={t('home.filters.max')}
+                                className="filter-input-small"
+                                value={filters.maxExp}
+                                onChange={handleFilterChange}
+                            />
+                        </div>
+
+                        {/* Şehir Filtresi */}
+                        <div className="filter-group">
+                            <span className="filter-label">{t('home.filters.city')}:</span>
+                            <select
+                                name="city"
+                                className="filter-select"
+                                value={filters.city}
+                                onChange={handleFilterChange}
+                            >
+                                <option value="">{t('home.filters.allCities')}</option>
+                                {cities.map(city => (
+                                    <option key={city} value={city}>{city}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Puan Filtresi */}
+                        <div className="filter-group">
+                            <span className="filter-label">{t('home.filters.minScore')}:</span>
+                            <input
+                                type="number"
+                                name="minScore"
+                                placeholder="4.0"
+                                step="0.1"
+                                max="5"
+                                className="filter-input-small"
+                                value={filters.minScore}
+                                onChange={handleFilterChange}
+                            />
+                        </div>
+
+                        {/* Müsaitlik Filtresi */}
+                        <div className="filter-group checkbox-filter">
+                            <input
+                                type="checkbox"
+                                id="onlyAvailable"
+                                name="onlyAvailable"
+                                checked={filters.onlyAvailable}
+                                onChange={handleFilterChange}
+                            />
+                            <label htmlFor="onlyAvailable" className="filter-label cursor-pointer">
+                                {t('home.filters.onlyAvailable')}
+                            </label>
+                        </div>
+
+                    </div>
+                </form>
+            </section>
+
+            <section className="tech-list">
+                {loading ? (
+                    <p style={{ textAlign: 'center', width: '100%', padding: '20px' }}>{t('home.status.loading')}</p>
+                ) : technicians.length === 0 ? (
+                    <div style={{ textAlign: 'center', width: '100%', padding: '20px', color: 'var(--sub-text)' }}>
+                        <h3>{t('home.status.notFoundTitle')}</h3>
+                        <p>{t('home.status.notFoundDesc')}</p>
+                    </div>
+                ) : (
+                    technicians.map((tech) => (
+                        <div key={tech.id} className="tech-card">
+                            <div className="tech-header">
+                                <div>
+                                    <h3 className="tech-name">{tech.first_name} {tech.surname}</h3>
+                                    <p className="tech-profession">{tech.profession}</p>
+                                </div>
+                                <div className="tech-score">
+                                    <span>★</span> {tech.technician_score}
+                                </div>
+                            </div>
+
+                            <div className="tech-details">
+                                <p>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    {tech.home_address || t('home.card.noAddress')}
+                                </p>
+                                <p>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    {tech.experience_years} {t('home.card.yearsExperience')}
+                                </p>
+                            </div>
+
+                            <div className={`status-badge ${tech.availability_status ? 'status-available' : 'status-busy'}`}>
+                                {tech.availability_status ? t('home.card.available') : t('home.card.busy')}
+                            </div>
+                        </div>
+                    ))
+                )}
+            </section>
         </div>
     );
 };
 
-export default Home;
+export default HomeScreen;

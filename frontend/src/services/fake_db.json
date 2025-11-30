@@ -1,0 +1,567 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "first_name": "yusuf",
+            "surname": "tarlan",
+            "email": "yusuf@hotmail.com",
+            "passwd": "1234",
+            "tel_no": "5321112233",
+            "home_address": "İstanbul",
+            "role_id": 3
+        },
+        {
+            "id": 2,
+            "first_name": "Ahmet",
+            "surname": "Yılmaz",
+            "email": "ahmet1@hotmail.com",
+            "passwd": "pass123",
+            "tel_no": "5321110001",
+            "home_address": "İstanbul",
+            "role_id": 1
+        },
+        {
+            "id": 3,
+            "first_name": "Ayşe",
+            "surname": "Kara",
+            "email": "ayse2@gmail.com",
+            "passwd": "pass234",
+            "tel_no": "5321110002",
+            "home_address": "Ankara",
+            "role_id": 1
+        },
+        {
+            "id": 4,
+            "first_name": "Mehmet",
+            "surname": "Demir",
+            "email": "mehmet3@yahoo.com",
+            "passwd": "pass345",
+            "tel_no": "5321110003",
+            "home_address": "İzmir",
+            "role_id": 1
+        },
+        {
+            "id": 5,
+            "first_name": "Elif",
+            "surname": "Çelik",
+            "email": "elif4@hotmail.com",
+            "passwd": "pass456",
+            "tel_no": "5321110004",
+            "home_address": "Bursa",
+            "role_id": 1
+        },
+        {
+            "id": 6,
+            "first_name": "Ali",
+            "surname": "Şahin",
+            "email": "ali5@gmail.com",
+            "passwd": "pass567",
+            "tel_no": "5321110005",
+            "home_address": "Adana",
+            "role_id": 1
+        },
+        {
+            "id": 7,
+            "first_name": "Fatma",
+            "surname": "Koç",
+            "email": "fatma6@yahoo.com",
+            "passwd": "pass568",
+            "tel_no": "5321110006",
+            "home_address": "İstanbul",
+            "role_id": 2
+        },
+        {
+            "id": 8,
+            "first_name": "Cem",
+            "surname": "Ak",
+            "email": "cem7@hotmail.com",
+            "passwd": "pass568",
+            "tel_no": "5321110007",
+            "home_address": "Ankara",
+            "role_id": 2
+        },
+        {
+            "id": 9,
+            "first_name": "Zeynep",
+            "surname": "Yıldız",
+            "email": "zeynep8@gmail.com",
+            "passwd": "pass568",
+            "tel_no": "5321110008",
+            "home_address": "İzmir",
+            "role_id": 2
+        },
+        {
+            "id": 10,
+            "first_name": "Okan",
+            "surname": "Polat",
+            "email": "okan9@yahoo.com",
+            "passwd": "pass568",
+            "tel_no": "5321110009",
+            "home_address": "Bursa",
+            "role_id": 2
+        },
+        {
+            "id": 11,
+            "first_name": "Selin",
+            "surname": "Arslan",
+            "email": "selin10@hotmail.com",
+            "passwd": "pass568",
+            "tel_no": "5321110010",
+            "home_address": "Adana",
+            "role_id": 2
+        }
+    ],
+    "roles": [
+        {
+            "id": 1,
+            "name": "technician"
+        },
+        {
+            "id": 2,
+            "name": "customer"
+        },
+        {
+            "id": 3,
+            "name": "customer_support"
+        }
+    ],
+    "technician_details": [
+        {
+            "technician_id": 2,
+            "profession": "Elektrik Teknisyeni",
+            "technician_score": 4.75,
+            "experience_years": 8,
+            "availability_status": true
+        },
+        {
+            "technician_id": 3,
+            "profession": "Klima Bakım Uzmanı",
+            "technician_score": 4.20,
+            "experience_years": 5,
+            "availability_status": true
+        },
+        {
+            "technician_id": 4,
+            "profession": "Bilgisayar Teknisyeni",
+            "technician_score": 3.90,
+            "experience_years": 3,
+            "availability_status": false
+        },
+        {
+            "technician_id": 5,
+            "profession": "Beyaz Eşya Servis Teknisyeni",
+            "technician_score": 4.55,
+            "experience_years": 10,
+            "availability_status": true
+        },
+        {
+            "technician_id": 6,
+            "profession": "Güvenlik Sistemleri Teknisyeni",
+            "technician_score": 4.10,
+            "experience_years": 6,
+            "availability_status": false
+        }
+    ],
+    "products": [
+        {
+            "id": 1,
+            "product_name": "Cep Telefonu"
+        },
+        {
+            "id": 2,
+            "product_name": "Laptop"
+        },
+        {
+            "id": 3,
+            "product_name": "Masa Üstü Bilgisayar"
+        },
+        {
+            "id": 4,
+            "product_name": "Tablet"
+        },
+        {
+            "id": 5,
+            "product_name": "Televizyon"
+        },
+        {
+            "id": 6,
+            "product_name": "Klima"
+        },
+        {
+            "id": 7,
+            "product_name": "Kamera"
+        },
+        {
+            "id": 8,
+            "product_name": "Bulaşık Makinesi"
+        },
+        {
+            "id": 9,
+            "product_name": "Çamaşır Makinesi"
+        },
+        {
+            "id": 10,
+            "product_name": "Kombi"
+        },
+        {
+            "id": 11,
+            "product_name": "Diğer"
+        }
+    ],
+    "product_models": [
+        {
+            "id": 1,
+            "product_id": 1,
+            "brand": "Apple",
+            "model_code": "iPhone15ProMax"
+        },
+        {
+            "id": 2,
+            "product_id": 1,
+            "brand": "Apple",
+            "model_code": "iPhone14Pro"
+        },
+        {
+            "id": 3,
+            "product_id": 1,
+            "brand": "Samsung",
+            "model_code": "GalaxyS24Ultra"
+        },
+        {
+            "id": 4,
+            "product_id": 1,
+            "brand": "Samsung",
+            "model_code": "GalaxyS23Plus"
+        },
+        {
+            "id": 5,
+            "product_id": 1,
+            "brand": "Xiaomi",
+            "model_code": "14Pro"
+        },
+        {
+            "id": 6,
+            "product_id": 1,
+            "brand": "Xiaomi",
+            "model_code": "RedmiNote13Pro"
+        },
+        {
+            "id": 7,
+            "product_id": 1,
+            "brand": "Oppo",
+            "model_code": "FindX6Pro"
+        },
+        {
+            "id": 8,
+            "product_id": 1,
+            "brand": "OnePlus",
+            "model_code": "12Pro"
+        },
+        {
+            "id": 9,
+            "product_id": 1,
+            "brand": "Google",
+            "model_code": "Pixel8Pro"
+        },
+        {
+            "id": 10,
+            "product_id": 1,
+            "brand": "Huawei",
+            "model_code": "P60Pro"
+        },
+        {
+            "id": 11,
+            "product_id": 11,
+            "brand": "Diğer",
+            "model_code": "Diğer"
+        },
+        {
+            "id": 12,
+            "product_id": 2,
+            "brand": "Dell",
+            "model_code": "XPS13-9310"
+        },
+        {
+            "id": 13,
+            "product_id": 2,
+            "brand": "HP",
+            "model_code": "Pavilion15"
+        },
+        {
+            "id": 14,
+            "product_id": 2,
+            "brand": "Lenovo",
+            "model_code": "ThinkPadX1"
+        },
+        {
+            "id": 15,
+            "product_id": 2,
+            "brand": "Asus",
+            "model_code": "ZenBook14"
+        },
+        {
+            "id": 16,
+            "product_id": 2,
+            "brand": "Apple",
+            "model_code": "MacBookAirM2"
+        },
+        {
+            "id": 17,
+            "product_id": 3,
+            "brand": "Dell",
+            "model_code": "OptiPlex7090"
+        },
+        {
+            "id": 18,
+            "product_id": 3,
+            "brand": "HP",
+            "model_code": "EliteDesk800"
+        },
+        {
+            "id": 19,
+            "product_id": 3,
+            "brand": "Lenovo",
+            "model_code": "IdeaCentre5"
+        },
+        {
+            "id": 20,
+            "product_id": 3,
+            "brand": "Acer",
+            "model_code": "VeritonX4660"
+        },
+        {
+            "id": 21,
+            "product_id": 3,
+            "brand": "Apple",
+            "model_code": "iMac24"
+        },
+        {
+            "id": 22,
+            "product_id": 4,
+            "brand": "Apple",
+            "model_code": "iPadAir5"
+        },
+        {
+            "id": 23,
+            "product_id": 4,
+            "brand": "Samsung",
+            "model_code": "GalaxyTabS8"
+        },
+        {
+            "id": 24,
+            "product_id": 4,
+            "brand": "Lenovo",
+            "model_code": "TabP11Pro"
+        },
+        {
+            "id": 25,
+            "product_id": 4,
+            "brand": "Huawei",
+            "model_code": "MatePad11"
+        },
+        {
+            "id": 26,
+            "product_id": 4,
+            "brand": "Microsoft",
+            "model_code": "SurfaceGo3"
+        },
+        {
+            "id": 27,
+            "product_id": 5,
+            "brand": "Samsung",
+            "model_code": "QLED55Q80"
+        },
+        {
+            "id": 28,
+            "product_id": 5,
+            "brand": "LG",
+            "model_code": "OLED48C1"
+        },
+        {
+            "id": 29,
+            "product_id": 5,
+            "brand": "Sony",
+            "model_code": "BraviaX90J"
+        },
+        {
+            "id": 30,
+            "product_id": 5,
+            "brand": "Philips",
+            "model_code": "55PUS8506"
+        },
+        {
+            "id": 31,
+            "product_id": 5,
+            "brand": "Panasonic",
+            "model_code": "TX-50JX800"
+        },
+        {
+            "id": 32,
+            "product_id": 6,
+            "brand": "Mitsubishi",
+            "model_code": "MSZ-AP25VGK"
+        },
+        {
+            "id": 33,
+            "product_id": 6,
+            "brand": "LG",
+            "model_code": "DualCool12"
+        },
+        {
+            "id": 34,
+            "product_id": 6,
+            "brand": "Daikin",
+            "model_code": "FTXM35R"
+        },
+        {
+            "id": 35,
+            "product_id": 6,
+            "brand": "Samsung",
+            "model_code": "AR12TXFYAWK"
+        },
+        {
+            "id": 36,
+            "product_id": 6,
+            "brand": "Bosch",
+            "model_code": "Climate5000"
+        },
+        {
+            "id": 37,
+            "product_id": 7,
+            "brand": "Canon",
+            "model_code": "EOSR6"
+        },
+        {
+            "id": 38,
+            "product_id": 7,
+            "brand": "Nikon",
+            "model_code": "Z6II"
+        },
+        {
+            "id": 39,
+            "product_id": 7,
+            "brand": "Sony",
+            "model_code": "Alpha7IV"
+        },
+        {
+            "id": 40,
+            "product_id": 7,
+            "brand": "Panasonic",
+            "model_code": "LumixGH5"
+        },
+        {
+            "id": 41,
+            "product_id": 7,
+            "brand": "GoPro",
+            "model_code": "Hero11Black"
+        },
+        {
+            "id": 42,
+            "product_id": 8,
+            "brand": "Bosch",
+            "model_code": "Serie4SMV46"
+        },
+        {
+            "id": 43,
+            "product_id": 8,
+            "brand": "Siemens",
+            "model_code": "iQ300"
+        },
+        {
+            "id": 44,
+            "product_id": 8,
+            "brand": "Arçelik",
+            "model_code": "9453"
+        },
+        {
+            "id": 45,
+            "product_id": 8,
+            "brand": "Whirlpool",
+            "model_code": "ADG959"
+        },
+        {
+            "id": 46,
+            "product_id": 8,
+            "brand": "Samsung",
+            "model_code": "DW60M5052FS"
+        },
+        {
+            "id": 47,
+            "product_id": 9,
+            "brand": "Bosch",
+            "model_code": "WAJ2806S"
+        },
+        {
+            "id": 48,
+            "product_id": 9,
+            "brand": "Arçelik",
+            "model_code": "9123"
+        },
+        {
+            "id": 49,
+            "product_id": 9,
+            "brand": "Samsung",
+            "model_code": "WW90T554DAX"
+        },
+        {
+            "id": 50,
+            "product_id": 9,
+            "brand": "LG",
+            "model_code": "F4WV710P1"
+        },
+        {
+            "id": 51,
+            "product_id": 9,
+            "brand": "Siemens",
+            "model_code": "WM14URH0TR"
+        },
+        {
+            "id": 52,
+            "product_id": 10,
+            "brand": "Vaillant",
+            "model_code": "ecoTECPlus"
+        },
+        {
+            "id": 53,
+            "product_id": 10,
+            "brand": "Bosch",
+            "model_code": "Condens5000W"
+        },
+        {
+            "id": 54,
+            "product_id": 10,
+            "brand": "Ariston",
+            "model_code": "ClasOne"
+        },
+        {
+            "id": 55,
+            "product_id": 10,
+            "brand": "ECA",
+            "model_code": "EcoLine"
+        },
+        {
+            "id": 56,
+            "product_id": 10,
+            "brand": "Demirdöküm",
+            "model_code": "Nitromix"
+        }
+    ],
+    "service_requests": [],
+    "request_statuses": [
+        {
+            "id": 1,
+            "name": "Başvuru Alındı"
+        },
+        {
+            "id": 2,
+            "name": "Hizmet verilecek"
+        },
+        {
+            "id": 3,
+            "name": "Hizmet sağlandı"
+        }
+    ],
+    "messages": [],
+    "complaints": [],
+    "cookies": []
+}

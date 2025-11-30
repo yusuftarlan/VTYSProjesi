@@ -1,0 +1,233 @@
+/* --- Login.css Değişkenlerini Aynen Alıyoruz --- */
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --sub-text: #65676b;
+    --input-bg: #ffffff;
+    --input-border: #ddd;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --button-bg: #4a90e2;
+    --button-hover: #357abd;
+    --accent-color: #4a90e2;
+}
+
+.dark-mode {
+    --bg-color: #18191a;
+    --card-bg: #242526;
+    --text-color: #e4e6eb;
+    --sub-text: #b0b3b8;
+    --input-bg: #3a3b3c;
+    --input-border: #3e4042;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* --- Sayfa Yapısı --- */
+.home-page {
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    padding: 2vh 4vw;
+    box-sizing: border-box;
+}
+
+/* Header (Theme Toggle vb.) */
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3vh;
+}
+
+.home-title {
+    font-size: clamp(1.5rem, 4vh, 2.5rem);
+    font-weight: bold;
+}
+
+/* --- Arama ve Filtre Kartı --- */
+.search-container {
+    background-color: var(--card-bg);
+    padding: 2.5vh;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    margin-bottom: 4vh;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-bar-wrapper {
+    display: flex;
+    gap: 1vw;
+    margin-bottom: 2vh;
+}
+
+/* Inputlar Login ile Aynı Stil */
+.search-input,
+.filter-input {
+    width: 100%;
+    padding: 1.2vh 1.5vh;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 8px;
+    font-size: clamp(0.9rem, 2vh, 1.1rem);
+    transition: border-color 0.3s;
+}
+
+.search-input:focus,
+.filter-input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.search-btn {
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 3vw;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: clamp(0.9rem, 2vh, 1.1rem);
+    transition: background 0.3s;
+}
+
+.search-btn:hover {
+    background-color: var(--button-hover);
+}
+
+/* Filtre Alanı */
+.filters-wrapper {
+    display: flex;
+    gap: 2vw;
+    align-items: center;
+    padding-top: 1vh;
+    border-top: 1px solid var(--input-border);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 1vh;
+}
+
+.filter-label {
+    font-size: clamp(0.8rem, 1.8vh, 1rem);
+    color: var(--sub-text);
+    white-space: nowrap;
+}
+
+.filter-input-small {
+    width: 8vw;
+    min-width: 60px;
+    padding: 1vh;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* --- Liste Alanı (Grid) --- */
+.tech-list {
+    display: grid;
+    /* Responsive Grid: Kartlar küçülünce alt satıra geçer */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 3vh;
+}
+
+/* Teknisyen Kartı */
+.tech-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2.5vh;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    border: 1px solid var(--input-border);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+}
+
+.tech-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5vh;
+}
+
+.tech-name {
+    font-size: clamp(1.1rem, 2.2vh, 1.4rem);
+    font-weight: bold;
+    margin: 0;
+}
+
+.tech-profession {
+    color: var(--accent-color);
+    font-size: clamp(0.9rem, 1.8vh, 1rem);
+    margin-top: 0.5vh;
+}
+
+.tech-score {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.5vh 1vh;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tech-details {
+    margin-top: 1vh;
+    font-size: clamp(0.85rem, 1.8vh, 0.95rem);
+    color: var(--sub-text);
+}
+
+.tech-details p {
+    margin: 0.5vh 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8vh;
+}
+
+.status-badge {
+    margin-top: 2vh;
+    text-align: center;
+    padding: 1vh;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.status-available {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #27ae60;
+}
+
+.status-busy {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #c0392b;
+}
+
+/* --- Theme Toggle Butonu (Login'den alındı) --- */
+.theme-btn-fixed {
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 50%;
+    width: 5vh;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-color);
+    box-shadow: 0 2px 5px var(--shadow-color);
+}

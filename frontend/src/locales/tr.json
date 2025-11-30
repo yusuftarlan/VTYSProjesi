@@ -19,5 +19,31 @@
         "submitButton": "Kayıt Ol",
         "toggleText": "Zaten hesabınız var mı?",
         "toggleLink": "Giriş Yap"
+    },
+    "home": {
+        "title": "Teknik Servis Bul",
+        "searchPlaceholder": "Usta ismi, uzmanlık alanı ara (örn: Klima)",
+        "searchButton": "Ara",
+        "filters": {
+            "experience": "Deneyim",
+            "min": "Min",
+            "max": "Max",
+            "city": "Şehir",
+            "allCities": "Tümü",
+            "minScore": "Min Puan",
+            "onlyAvailable": "Sadece Müsait"
+        },
+        "status": {
+            "loading": "Yükleniyor...",
+            "notFoundTitle": "Sonuç Bulunamadı",
+            "notFoundDesc": "Filtreleri değiştirerek tekrar deneyin.",
+            "noResults": "Aradığınız kriterlere uygun usta bulunamadı."
+        },
+        "card": {
+            "noAddress": "Adres Girilmemiş",
+            "yearsExperience": "Yıl Deneyim",
+            "available": "Müsait",
+            "busy": "Meşgul"
+        }
     }
 }

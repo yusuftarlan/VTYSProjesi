@@ -9,7 +9,7 @@ const LoginScreen = () => {
     const { login, register } = useAuth();
     const navigate = useNavigate();
 
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState('dark');
     const [isLoginView, setIsLoginView] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
 
