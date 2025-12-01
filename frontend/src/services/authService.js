@@ -100,7 +100,7 @@ export const authService = {
                 const details = getMockDetails();
                 details.push({
                     technician_id: newId,
-                    profession: formData.profession || "Genel Teknisyen",
+                    profession: formData.profession,
                     technician_score: 0, // Yeni başlayan 0 puan
                     experience_years: parseInt(formData.experienceYears) || 0,
                     availability_status: true // Varsayılan müsait
@@ -220,7 +220,7 @@ export const authService = {
 
         // Production için query string oluşturma (Backend varsa)
         const params = new URLSearchParams(filters);
-        const response = await fetch(`${API_URL}/api/technicians?${params.toString()}`);
+        const response = await fetch(`${API_URL}/auth/technicians?${params.toString()}`);
         if (!response.ok) throw new Error('Veri çekilemedi');
         return await response.json();
     },
@@ -233,7 +233,7 @@ export const authService = {
             const uniqueProfessions = [...new Set(details.map(d => d.profession))];
             return uniqueProfessions.sort();
         }
-        const response = await fetch(`${API_URL}/api/products`);
+        const response = await fetch(`${API_URL}/auth/technicians/professions`);
         return await response.json();
     }
 };

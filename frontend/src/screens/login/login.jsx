@@ -17,7 +17,7 @@ const LoginScreen = () => {
 
     const [formData, setFormData] = useState({
         email: '', password: '', name: '', surname: '', phone: '', address: '', isTechnician: false, profession: '',
-        experienceYears: ''
+        experience_years: ''
     });
 
     const toggleTheme = () => {
@@ -135,8 +135,8 @@ const LoginScreen = () => {
 
                                     <input
                                         type="number"
-                                        name="experienceYears"
-                                        placeholder={t('register.experienceYears')}
+                                        name="experience_years"
+                                        placeholder={t('Deneyim yılınızı giriniz' )}
                                         onChange={handleChange}
                                         className="form-input"
                                         required

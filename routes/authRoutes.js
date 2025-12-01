@@ -15,4 +15,9 @@ router.get('/me', authController.getMe);
 // POST /api/auth/logout
 router.post('/logout', authController.logout);
 
+router.get('/technicians', authController.getTechnicians);
+
+
+router.get('/technicians/professions', authController.getProfessions);
+
 export default router;

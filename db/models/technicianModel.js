@@ -10,33 +10,89 @@ export async function createTechnicianDetail(
     experience_years
 ) {
     let tech_score = 0;
-    let availability_status = 0;
+    let availability_status = 1;
     const [result] = await pool.query(
         `INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
-        VALUES (?, ?, ?, ?, ?))`,
+        VALUES (?, ?, ?, ?, ?)`,
         [tech_id, profession, tech_score, experience_years, availability_status]
     );
 
+    return result;
+}
+
+export async function getTechniciansWithFilters(filters) {
+    // Role ID = 1 olan (Teknisyen) kullanıcıları ve detaylarını çek
+    let sql = `
+        SELECT t.*, u.first_name, u.surname, u.home_address, u.tel_no 
+        FROM technician_details t
+        JOIN users u ON t.technician_id = u.id
+        WHERE u.role_id = 1
+    `;
+    const params = [];
+
+    // 1. İsim Arama (Ad veya Soyad)
+    if (filters.q) {
+        sql += ` AND (u.first_name LIKE ? OR u.surname LIKE ? OR CONCAT(u.first_name, ' ', u.surname) LIKE ?)`;
+        const searchTerm = `%${filters.q}%`;
+        params.push(searchTerm, searchTerm, searchTerm);
+    }
+
+    // 2. Uzmanlık Filtresi
+    if (filters.profession) {
+        sql += ` AND t.profession = ?`;
+        params.push(filters.profession);
+    }
+
+    // 3. Şehir Filtresi
+    if (filters.city) {
+        sql += ` AND u.home_address LIKE ?`;
+        params.push(`%${filters.city}%`);
+    }
+
+    // 4. Deneyim Aralığı
+    if (filters.minExp) {
+        sql += ` AND t.experience_years >= ?`;
+        params.push(filters.minExp);
+    }
+    if (filters.maxExp) {
+        sql += ` AND t.experience_years <= ?`;
+        params.push(filters.maxExp);
+    }
+
+    // 5. Minimum Puan
+    if (filters.minScore) {
+        sql += ` AND t.technician_score >= ?`;
+        params.push(filters.minScore);
+    }
+
+    // 6. Sadece Uygun Olanlar
+    if (filters.onlyAvailable === 'true' || filters.onlyAvailable === true) {
+        sql += ` AND t.availability_status = 1`;
+    }
+
+    // Puanı yüksek olan en üstte çıksın
+    sql += ` ORDER BY t.technician_score DESC`;
+
+    const [rows] = await pool.query(sql, params);
     return rows;
 }
 
 //TeknikerID alarak tekniker detaylarını getirir
 export async function getTechnicianDetailByID(tech_id) {
-    const [result] = await pool.query(
+    const [rows] = await pool.query(
         `SELECT * FROM technician_details WHERE technician_id = ?`,
-        tech_id
+        [tech_id]
     );
 
-    return result;
+    return rows[0];
 }
 
 //Tekniker alanlarını getirir
-export async function getTechnicianProfessions() {
-    const [result] = await pool.query(
+export async function getDistinctProfessions() {
+    const [rows] = await pool.query(
         `SELECT DISTINCT profession FROM technician_details`
     );
-
-    return result;
+    return rows;
 }
 
 export async function setTechnicianAvailable(id) {

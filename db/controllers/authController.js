@@ -7,7 +7,8 @@ import * as cookiesModel from '../models/cookiesModel.js';
 // --- REGISTER ---
 export const register = async (req, res) => {
     try {
-        const { name, surname, email, password, phone, address, isTechnician } = req.body;
+        // Frontend'den gelen profession ve experience verilerini de alıyoruz
+        const { name, surname, email, password, phone, address, isTechnician, profession, experience_years } = req.body;
 
         // 1. Kullanıcı var mı kontrol et
         const existingUser = await userModel.getUserByEmail(email);
@@ -19,17 +20,19 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // 3. ROL BELİRLEME (YENİ MANTIK)
-        // isTechnician true ise Role ID = 1 (Teknisyen)
-        // isTechnician false ise Role ID = 2 (Müşteri)
+        // 3. ROL BELİRLEME
         const role_id = isTechnician ? 1 : 2;
 
         // 4. Kullanıcıyı oluştur
         const userId = await userModel.createUser(name, surname, email, hashedPassword, phone, address, role_id);
 
-        // 5. Eğer Teknisyen (Rol 1) ise detay tablosuna ekle
+        // 5. Eğer Teknisyen ise detayları kaydet
         if (role_id === 1) {
-            await technicianModel.createTechnicianDetail(userId, "Belirtilmedi", 0); 
+            // Formdan gelen veriyi kullan, gelmediyse varsayılan ata
+            const techProfession = profession || "Genel Tamir";
+            const techExp = experience_years || 0;
+            
+            await technicianModel.createTechnicianDetail(userId, techProfession, techExp); 
         }
 
         res.status(201).json({
@@ -37,7 +40,7 @@ export const register = async (req, res) => {
             user: {
                 id: userId,
                 name: name,
-                isTechnician: role_id === 1 // Frontend için boolean değer
+                isTechnician: role_id === 1
             }
         });
 
@@ -131,5 +134,41 @@ export const logout = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ success: false });
+    }
+};
+
+
+export const getTechnicians = async (req, res) => {
+    try {
+        
+        const filters = {
+            q: req.query.q,
+            profession: req.query.profession,
+            city: req.query.city,
+            minExp: req.query.minExp,
+            maxExp: req.query.maxExp,
+            minScore: req.query.minScore,
+            onlyAvailable: req.query.onlyAvailable
+        };
+
+        const technicians = await technicianModel.getTechniciansWithFilters(filters);
+        res.json(technicians);
+
+    } catch (error) {
+        console.error("Get Technicians Error:", error);
+        res.status(500).json({ message: "Sunucu hatası" });
+    }
+};
+
+// Uzmanlık Listesini Getir
+export const getProfessions = async (req, res) => {
+    try {
+        const rows = await technicianModel.getDistinctProfessions();
+       
+        const professions = rows.map(row => row.profession);
+        res.json(professions);
+    } catch (error) {
+        console.error("Get Professions Error:", error);
+        res.status(500).json({ message: "Sunucu hatası" });
     }
 };
