@@ -17,6 +17,8 @@
         "address": "Ev Adresi",
         "technician": "Teknisyen misiniz?",
         "profession": "Uzmanlık Alanı",
+        "professionOther": "Diğer (Listede Yok - Kendim Gireceğim)",
+        "professionPlaceholder": "Lütfen uzmanlık alanınızı yazınız",
         "experienceYears": "Deneyim Süresi (Yıl)",
         "submitButton": "Kayıt Ol",
         "toggleText": "Zaten hesabınız var mı?",

@@ -13,11 +13,21 @@ const LoginScreen = () => {
     const [theme, setTheme] = useState('dark');
     const [isLoginView, setIsLoginView] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
+
     const [professionList, setProfessionList] = useState([]);
 
+    const [isCustomProfession, setIsCustomProfession] = useState(false);
+
     const [formData, setFormData] = useState({
-        email: '', password: '', name: '', surname: '', phone: '', address: '', isTechnician: false, profession: '',
-        experience_years: ''
+        email: '',
+        password: '',
+        name: '',
+        surname: '',
+        phone: '',
+        address: '',
+        isTechnician: false,
+        profession: '',
+        experienceYears: ''
     });
 
     const toggleTheme = () => {
@@ -27,6 +37,17 @@ const LoginScreen = () => {
     const handleChange = (e) => {
         const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
         setFormData({ ...formData, [e.target.name]: value });
+    };
+
+    const handleProfessionSelect = (e) => {
+        const value = e.target.value;
+        if (value === 'OTHER_OPTION') {
+            setIsCustomProfession(true);
+            setFormData({ ...formData, profession: '' });
+        } else {
+            setIsCustomProfession(false);
+            setFormData({ ...formData, profession: value });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -49,11 +70,9 @@ const LoginScreen = () => {
         }
     };
 
-    // Sayfa yüklendiğinde uzmanlık alanlarını çek
     useEffect(() => {
         const fetchProfessions = async () => {
             try {
-                // getProductTypes yerine getProfessions kullanıyoruz
                 const profs = await authService.getProfessions();
                 if (Array.isArray(profs)) {
                     setProfessionList(profs);
@@ -115,28 +134,43 @@ const LoginScreen = () => {
                             {formData.isTechnician && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5vh', marginTop: '0.5vh', marginBottom: '0.5vh', borderLeft: '3px solid #4a90e2', paddingLeft: '10px' }}>
 
-                                    {/* DROPDOWN (SELECT) */}
+                                    {/* 1. ADIM: DROPDOWN */}
                                     <select
-                                        name="profession"
+                                        name="professionSelect"
                                         className="form-input"
-                                        onChange={handleChange}
+                                        onChange={handleProfessionSelect}
                                         required
-                                        value={formData.profession}
+                                        // Eğer özel meslek giriliyorsa dropdown 'OTHER_OPTION' değerinde dursun
+                                        value={isCustomProfession ? 'OTHER_OPTION' : formData.profession}
                                     >
                                         <option value="">{t('register.profession') || "Uzmanlık Seçiniz"}</option>
 
-                                        {/* professionList artık string array olduğu için doğrudan map ediyoruz */}
                                         {professionList.map((prof, index) => (
                                             <option key={index} value={prof}>
                                                 {prof}
                                             </option>
                                         ))}
+
+                                        <option value="OTHER_OPTION">{t('register.professionOther') || "Diğer (Listede Yok)"}</option>
                                     </select>
+
+                                    {/* 2. ADIM: DİĞER SEÇİLDİYSE GÖSTERİLECEK TEXT INPUT */}
+                                    {isCustomProfession && (
+                                        <input
+                                            type="text"
+                                            name="profession"
+                                            placeholder={t('register.professionPlaceholder') || "Uzmanlık alanınızı yazınız"}
+                                            onChange={handleChange}
+                                            className="form-input"
+                                            required
+                                            autoFocus
+                                        />
+                                    )}
 
                                     <input
                                         type="number"
-                                        name="experience_years"
-                                        placeholder={t('Deneyim yılınızı giriniz' )}
+                                        name="experienceYears"
+                                        placeholder={t('register.experienceYears') || "Deneyim Yılı"}
                                         onChange={handleChange}
                                         className="form-input"
                                         required
