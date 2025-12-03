@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import AppointmentPopup from './appintment_popup';
 import './Home.css';
 
 const HomeScreen = () => {
@@ -29,6 +30,8 @@ const HomeScreen = () => {
     const [professionList, setProfessionList] = useState([]);
     const cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Adana"];
 
+    const [selectedTech, setSelectedTech] = useState(null);
+
     // Tema
     const toggleTheme = () => {
         setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
@@ -38,10 +41,14 @@ const HomeScreen = () => {
     const handleLogout = async () => {
         try {
             await authService.logout();
-            navigate('/login'); // Giriş sayfasına yönlendir (Route'un '/login' olduğunu varsayıyorum)
+            navigate('/login');
         } catch (error) {
             console.error("Çıkış yapılırken hata:", error);
         }
+    };
+
+    const handleGoToRequests = () => {
+        navigate('/requests');
     };
 
     // Araama işlemi
@@ -79,6 +86,14 @@ const HomeScreen = () => {
         setFilters({ ...filters, [e.target.name]: value });
     };
 
+    const handleBookClick = (tech) => {
+        setSelectedTech(tech);
+    };
+
+    const handleAppointmentSuccess = () => {
+        alert("Teklifiniz başarıyla ustaya iletildi!");
+    };
+
     // Sayfa ile uzmanlıkları yükle
     useEffect(() => {
         const initData = async () => {
@@ -102,6 +117,17 @@ const HomeScreen = () => {
             <header className="home-header">
                 <h1 className="home-title">{t('home.title')}</h1>
                 <div className="header-actions">
+
+                    {/* Taleplerim Butonu */}
+                    <button onClick={handleGoToRequests} className="theme-btn-fixed" title="Taleplerim">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <line x1="10" y1="9" x2="8" y2="9"></line>
+                        </svg>
+                    </button>
 
                     {/* Tema Butonu */}
                     <button onClick={toggleTheme} className="theme-btn-fixed" title="Temayı Değiştir">
@@ -261,10 +287,39 @@ const HomeScreen = () => {
                             <div className={`status-badge ${tech.availability_status ? 'status-available' : 'status-busy'}`}>
                                 {tech.availability_status ? t('home.card.available') : t('home.card.busy')}
                             </div>
+
+                            {tech.availability_status && (
+                                <button
+                                    className="book-btn"
+                                    onClick={() => handleBookClick(tech)}
+                                    style={{
+                                        marginTop: '15px',
+                                        width: '100%',
+                                        padding: '10px',
+                                        backgroundColor: 'var(--accent-color)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    Randevu Oluştur
+                                </button>
+                            )}
                         </div>
                     ))
                 )}
             </section>
+
+            {/* --- SİPARİŞ POPUPU --- */}
+            {selectedTech && (
+                <AppointmentPopup
+                    technician={selectedTech}
+                    onClose={() => setSelectedTech(null)}
+                    onSuccess={handleAppointmentSuccess}
+                />
+            )}
         </div>
     );
 };

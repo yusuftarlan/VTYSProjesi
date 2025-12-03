@@ -1,4 +1,3 @@
-/* --- Login.css Değişkenlerini Aynen Alıyoruz --- */
 :root {
     --bg-color: #f0f2f5;
     --card-bg: #ffffff;
@@ -22,7 +21,6 @@
     --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-/* --- Sayfa Yapısı --- */
 .home-page {
     min-height: 100vh;
     background-color: var(--bg-color);
@@ -33,7 +31,6 @@
     box-sizing: border-box;
 }
 
-/* Header (Theme Toggle vb.) */
 .home-header {
     display: flex;
     justify-content: space-between;
@@ -46,7 +43,6 @@
     font-weight: bold;
 }
 
-/* --- Arama ve Filtre Kartı --- */
 .search-container {
     background-color: var(--card-bg);
     padding: 2.5vh;
@@ -62,7 +58,6 @@
     margin-bottom: 2vh;
 }
 
-/* Inputlar Login ile Aynı Stil */
 .search-input,
 .filter-input {
     width: 100%;
@@ -97,7 +92,6 @@
     background-color: var(--button-hover);
 }
 
-/* Filtre Alanı */
 .filters-wrapper {
     display: flex;
     gap: 2vw;
@@ -129,15 +123,12 @@
     text-align: center;
 }
 
-/* --- Liste Alanı (Grid) --- */
 .tech-list {
     display: grid;
-    /* Responsive Grid: Kartlar küçülünce alt satıra geçer */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 3vh;
 }
 
-/* Teknisyen Kartı */
 .tech-card {
     background-color: var(--card-bg);
     border-radius: 12px;
@@ -217,7 +208,6 @@
     color: #c0392b;
 }
 
-/* --- Theme Toggle Butonu (Login'den alındı) --- */
 .theme-btn-fixed {
     background: var(--card-bg);
     border: 1px solid var(--input-border);

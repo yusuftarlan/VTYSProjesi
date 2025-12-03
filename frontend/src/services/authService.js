@@ -21,11 +21,15 @@ const getMockDetails = () => {
     localStorage.setItem('mock_db_details', JSON.stringify(fakeDb.technician_details));
     return fakeDb.technician_details;
 };
-const saveMockDetails = (details) => localStorage.setItem('mock_db_details', JSON.stringify(details));
-
-const saveMockDB = (users) => {
-    localStorage.setItem('mock_db_users', JSON.stringify(users));
+const getMockOrders = () => {
+    const localData = localStorage.getItem('mock_orders');
+    if (localData) return JSON.parse(localData);
+    return []; // Başlangıçta boş
 };
+
+const saveMockDetails = (details) => localStorage.setItem('mock_db_details', JSON.stringify(details));
+const saveMockUsers = (users) => localStorage.setItem('mock_db_users', JSON.stringify(users));
+const saveMockOrders = (orders) => localStorage.setItem('mock_orders', JSON.stringify(orders));
 
 export const authService = {
     // 1. LOGIN
@@ -234,6 +238,52 @@ export const authService = {
             return uniqueProfessions.sort();
         }
         const response = await fetch(`${API_URL}/auth/technicians/professions`);
+        return await response.json();
+    },
+
+    // --- 7. CREATE ORDER ---
+    createOrder: async (orderData) => {
+        // orderData: { technician_id, brand, product_name, description, price_offer }
+
+        if (IS_DEV) {
+            console.log("🟡 Dev Mode: Creating Order", orderData);
+            await new Promise(resolve => setTimeout(resolve, 800)); // Loading simülasyonu
+
+            // 1. Oturum kontrolü
+            const session = localStorage.getItem('mock_session');
+            if (!session) throw new Error("Sipariş oluşturmak için giriş yapmalısınız.");
+            const currentUser = JSON.parse(session);
+
+            // 2. Mevcut siparişleri çek
+            const orders = getMockOrders();
+
+            // 3. Yeni sipariş objesi
+            const newOrder = {
+                id: Date.now(), // Benzersiz ID
+                customer_id: currentUser.id,
+                technician_id: orderData.technician_id,
+                brand: orderData.brand,
+                product_name: orderData.product_name,
+                description: orderData.description,
+                price_offer: parseFloat(orderData.price_offer),
+                status: 'pending', // pending, accepted, rejected, completed
+                created_at: new Date().toISOString()
+            };
+
+            // 4. Kaydet
+            orders.push(newOrder);
+            saveMockOrders(orders);
+
+            return { success: true, orderId: newOrder.id };
+        }
+
+        // Prod implementation
+        const response = await fetch(`${API_URL}/orders`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData),
+        });
+        if (!response.ok) throw new Error('Sipariş oluşturulamadı');
         return await response.json();
     }
 };
