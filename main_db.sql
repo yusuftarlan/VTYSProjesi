@@ -244,4 +244,25 @@ INSERT INTO product_models (product_id, brand, model_code) VALUES
 (10, 'ECA', 'EcoLine'),
 (10, 'Demirdöküm', 'Nitromix');
 
+-- Service Requests için örnek veri
+INSERT INTO service_requests (customer_id, technician_id, model_id, request_date, completed_date, request_status_id, service_score) VALUES
+(7, 2, 1, '2025-11-15 10:30:00', '2025-11-17 14:00:00', 3, 4.50),
+(8, 3, 36, '2025-11-20 09:00:00', '2025-11-22 16:30:00', 3, 4.80),
+(9, 4, 12, '2025-11-28 14:15:00', NULL, 2, NULL),
+(10, 5, 41, '2025-12-01 11:00:00', NULL, 1, NULL),
+(11, 6, 27, '2025-12-02 08:45:00', NULL, 1, NULL);
+
+-- Messages için örnek veri
+INSERT INTO messages (request_id, sender_id, message, date) VALUES
+(1, 7, 'Merhaba, telefonum açılmıyor, yardımcı olabilir misiniz?', '2025-11-15 10:35:00'),
+(1, 2, 'Merhaba, cihazınızı inceleyeceğiz. Yarın size ulaşacağız.', '2025-11-15 11:00:00'),
+(1, 7, 'Teşekkür ederim, bekliyorum.', '2025-11-15 11:15:00'),
+(1, 2, 'Cihazınız tamir edildi, teslim alabilirsiniz.', '2025-11-17 13:45:00'),
+(2, 8, 'Klimam soğutmuyor, bakım gerekiyor.', '2025-11-20 09:05:00'),
+(2, 3, 'Anlaşıldı, en kısa sürede gelirim.', '2025-11-20 09:30:00'),
+(3, 9, 'Laptopum çok yavaş çalışıyor, format atılabilir mi?', '2025-11-28 14:20:00'),
+(3, 4, 'Evet, format ve temizlik yapabiliriz. Randevu oluşturdum.', '2025-11-28 15:00:00'),
+(4, 10, 'Bulaşık makinem su almıyor, acil yardım lazım.', '2025-12-01 11:05:00'),
+(5, 11, 'Kameramın lensi çizildi, değişim mümkün mü?', '2025-12-02 08:50:00');
+
 
