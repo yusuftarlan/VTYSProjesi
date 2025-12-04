@@ -5,10 +5,10 @@ import pool from "../config/db.js";
 
 export async function getAllMessagesByServiceId(serviceRequest_id) {
     const [result] = await pool.query(
-        `SELECT * FROM messages JOIN service_requests ON service_requests.id = messages.id
-        WHERE service_requests.id = ?`,
+        `SELECT sender_id, content, m_date FROM messages 
+        WHERE request_id = ? ORDER BY m_date`,
         [serviceRequest_id]
     );
-    
+
     return result;
 }
