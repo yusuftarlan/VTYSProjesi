@@ -4,11 +4,7 @@ Bu modül techican_details tablosu için SQL komutlarını içerir
 import pool from "../config/db.js";
 
 //Tekniker detay kaydını oluşturur
-export async function createTechnicianDetail(
-    tech_id,
-    profession,
-    experience_years
-) {
+export async function createTechnicianDetail(tech_id, profession, experience_years) {
     let tech_score = 0;
     let availability_status = 1;
     const [result] = await pool.query(
@@ -66,7 +62,7 @@ export async function getTechniciansWithFilters(filters) {
     }
 
     // 6. Sadece Uygun Olanlar
-    if (filters.onlyAvailable === 'true' || filters.onlyAvailable === true) {
+    if (filters.onlyAvailable === "true" || filters.onlyAvailable === true) {
         sql += ` AND t.availability_status = 1`;
     }
 
@@ -79,36 +75,25 @@ export async function getTechniciansWithFilters(filters) {
 
 //TeknikerID alarak tekniker detaylarını getirir
 export async function getTechnicianDetailByID(tech_id) {
-    const [rows] = await pool.query(
-        `SELECT * FROM technician_details WHERE technician_id = ?`,
-        [tech_id]
-    );
+    const [rows] = await pool.query(`SELECT * FROM technician_details WHERE technician_id = ?`, [tech_id]);
 
     return rows[0];
 }
 
 //Tekniker alanlarını getirir
 export async function getDistinctProfessions() {
-    const [rows] = await pool.query(
-        `SELECT DISTINCT profession FROM technician_details`
-    );
+    const [rows] = await pool.query(`SELECT DISTINCT profession FROM technician_details`);
     return rows;
 }
 
 export async function setTechnicianAvailable(id) {
-    const [result] = await pool.query(
-        `UPDATE technician_details SET availability_status=1 WHERE technician_id=?`,
-        [id]
-    );
+    const [result] = await pool.query(`UPDATE technician_details SET availability_status=1 WHERE technician_id=?`, [id]);
 
     return result;
 }
 
 export async function setTechnicianNotAvailable(id) {
-    const [result] = await pool.query(
-        `UPDATE technician_details SET availability_status=0 WHERE technician_id=?`,
-        [id]
-    );
+    const [result] = await pool.query(`UPDATE technician_details SET availability_status=0 WHERE technician_id=?`, [id]);
 
     return result;
 }
@@ -117,10 +102,7 @@ export async function setTechnicianNotAvailable(id) {
 TEKNİKER SKORU İŞLEMLERİ
 */
 export async function setTechnicianScore(tech_id, score) {
-    const [result] = await pool.query(
-        `UPDATE technician_details SET technician_score=? WHERE technician_id=?`,
-        [score, tech_id]
-    );
+    const [result] = await pool.query(`UPDATE technician_details SET technician_score=? WHERE technician_id=?`, [score, tech_id]);
 
     return result;
 }
@@ -239,5 +221,22 @@ export async function getAllTechniciansTenTimesGetComplained() {
         HAVING COUNT(c.id) > 10;`
     );
 
+    return result;
+}
+
+//Müşterinin tüm talep bilgilerini döndürür
+export async function getAllServiceRequestsByCustomerID(customer_id) {
+    const [result] = await pool.query(
+        `SELECT p.product_name, pm.brand, CONCAT(u.first_name, ' ', u.surname) AS technician_name,
+        rs.name, rd.price
+        FROM service_requests as sr
+        JOIN product_models as pm ON sr.model_id = pm.id
+        JOIN products as p ON pm.product_id = p.id
+        JOIN users as u ON sr.technician_id = u.id
+        JOIN request_statuses as rs ON sr.request_status_id = rs.id
+        JOIN request_details as rd ON sr.id = rd.request_id
+        WHERE sr.customer_id = ?;`,
+        [customer_id]
+    );
     return result;
 }
