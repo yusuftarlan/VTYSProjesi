@@ -2,13 +2,13 @@ import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
 dotenv.config(); // .env dosyasını yükle
-console.log(process.env.DB_PASSWORD)
+console.log(process.env.DB_PASSWORD);
 // Veritabanı bağlantı havuzu oluştur (pool)
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    password: "YSifre123.",
+    database: "test_db",
     connectionLimit: 10, // aynı anda max 10 bağlantı
 });
 
@@ -28,4 +28,3 @@ export async function testDBConnection() {
 }
 
 export default pool;
-
