@@ -60,3 +60,20 @@ export async function getUsersNoAnyRequest() {
    
     return rows;
 }
+
+//Müşterinin tüm talep bilgilerini döndürür
+export async function getAllServiceRequestsByCustomerID(customer_id) {
+    const [result] = await pool.query(
+        `SELECT p.product_name, pm.brand, CONCAT(u.first_name, ' ', u.surname) AS technician_name,
+        rs.name, rd.price
+        FROM service_requests as sr
+        JOIN product_models as pm ON sr.model_id = pm.id
+        JOIN products as p ON pm.product_id = p.id
+        JOIN users as u ON sr.technician_id = u.id
+        JOIN request_statuses as rs ON sr.request_status_id = rs.id
+        JOIN request_details as rd ON sr.id = rd.request_id
+        WHERE sr.customer_id = ?;`,
+        [customer_id]
+    );
+    return result;
+}
