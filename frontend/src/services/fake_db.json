@@ -546,7 +546,58 @@
             "model_code": "Nitromix"
         }
     ],
-    "service_requests": [],
+    "service_requests": [
+        {
+            "id": 1,
+            "customer_id": 1,
+            "technician_id": 2,
+            "model_id": 1,
+            "request_date": "2025-11-15 10:30:00",
+            "completed_date": "2025-11-17 14:00:00",
+            "request_status_id": 3,
+            "service_score": 4.5
+        },
+        {
+            "id": 2,
+            "customer_id": 1,
+            "technician_id": 3,
+            "model_id": 36,
+            "request_date": "2025-11-20 09:00:00",
+            "completed_date": "2025-11-22 16:30:00",
+            "request_status_id": 3,
+            "service_score": 4.8
+        },
+        {
+            "id": 3,
+            "customer_id": 1,
+            "technician_id": 4,
+            "model_id": 12,
+            "request_date": "2025-11-28 14:15:00",
+            "completed_date": null,
+            "request_status_id": 2,
+            "service_score": null
+        },
+        {
+            "id": 4,
+            "customer_id": 1,
+            "technician_id": 5,
+            "model_id": 41,
+            "request_date": "2025-12-01 11:00:00",
+            "completed_date": null,
+            "request_status_id": 1,
+            "service_score": null
+        },
+        {
+            "id": 5,
+            "customer_id": 1,
+            "technician_id": 6,
+            "model_id": 27,
+            "request_date": "2025-12-02 08:45:00",
+            "completed_date": null,
+            "request_status_id": 1,
+            "service_score": null
+        }
+    ],
     "request_statuses": [
         {
             "id": 1,
@@ -561,7 +612,173 @@
             "name": "Hizmet sağlandı"
         }
     ],
-    "messages": [],
-    "complaints": [],
+    "request_details": [
+        {
+            "id": 1,
+            "request_id": 1,
+            "detail": "Ekran değişimi yapıldı",
+            "price": 2500
+        },
+        {
+            "id": 2,
+            "request_id": 1,
+            "detail": "Batarya değişimi yapıldı",
+            "price": 800
+        },
+        {
+            "id": 3,
+            "request_id": 2,
+            "detail": "Klima gazı dolumu yapıldı",
+            "price": 1200
+        },
+        {
+            "id": 4,
+            "request_id": 2,
+            "detail": "Filtre temizliği yapıldı",
+            "price": 350
+        },
+        {
+            "id": 5,
+            "request_id": 3,
+            "detail": "Format atıldı ve Windows kuruldu",
+            "price": 600
+        },
+        {
+            "id": 6,
+            "request_id": 4,
+            "detail": "Su pompası değişimi gerekiyor",
+            "price": 1500
+        },
+        {
+            "id": 7,
+            "request_id": 5,
+            "detail": "Lens değişimi yapılacak",
+            "price": 3200
+        }
+    ],
+    "messages": [
+        {
+            "id": 1,
+            "request_id": 1,
+            "sender_id": 7,
+            "content": "Merhaba, telefonum açılmıyor, yardımcı olabilir misiniz?",
+            "m_date": "2025-11-15 10:35:00"
+        },
+        {
+            "id": 2,
+            "request_id": 1,
+            "sender_id": 2,
+            "content": "Merhaba, cihazınızı inceleyeceğiz. Yarın size ulaşacağız.",
+            "m_date": "2025-11-15 11:00:00"
+        },
+        {
+            "id": 3,
+            "request_id": 1,
+            "sender_id": 7,
+            "content": "Teşekkür ederim, bekliyorum.",
+            "m_date": "2025-11-15 11:15:00"
+        },
+        {
+            "id": 4,
+            "request_id": 1,
+            "sender_id": 2,
+            "content": "Cihazınız tamir edildi, teslim alabilirsiniz.",
+            "m_date": "2025-11-17 13:45:00"
+        },
+        {
+            "id": 5,
+            "request_id": 2,
+            "sender_id": 8,
+            "content": "Klimam soğutmuyor, bakım gerekiyor.",
+            "m_date": "2025-11-20 09:05:00"
+        },
+        {
+            "id": 6,
+            "request_id": 2,
+            "sender_id": 3,
+            "content": "Anlaşıldı, en kısa sürede gelirim.",
+            "m_date": "2025-11-20 09:30:00"
+        },
+        {
+            "id": 7,
+            "request_id": 3,
+            "sender_id": 9,
+            "content": "Laptopum çok yavaş çalışıyor, format atılabilir mi?",
+            "m_date": "2025-11-28 14:20:00"
+        },
+        {
+            "id": 8,
+            "request_id": 3,
+            "sender_id": 4,
+            "content": "Evet, format ve temizlik yapabiliriz. Randevu oluşturdum.",
+            "m_date": "2025-11-28 15:00:00"
+        },
+        {
+            "id": 9,
+            "request_id": 4,
+            "sender_id": 10,
+            "content": "Bulaşık makinem su almıyor, acil yardım lazım.",
+            "m_date": "2025-12-01 11:05:00"
+        },
+        {
+            "id": 10,
+            "request_id": 5,
+            "sender_id": 11,
+            "content": "Kameramın lensi çizildi, değişim mümkün mü?",
+            "m_date": "2025-12-02 08:50:00"
+        }
+    ],
+    "complaints": [
+        {
+            "id": 1,
+            "request_id": 1,
+            "message": "Tamir edilen telefon 2 gün sonra tekrar bozuldu, ekran titriyor.",
+            "status": "Çözüldü",
+            "response": "Ücretsiz tekrar tamir yapıldı, garanti kapsamında değiştirildi.",
+            "created_at": "2025-11-19 09:00:00",
+            "resolved_at": "2025-11-20 14:30:00",
+            "response_by": 1
+        },
+        {
+            "id": 2,
+            "request_id": 2,
+            "message": "Klima bakımından sonra su damlıyor, önceden böyle değildi.",
+            "status": "Çözüldü",
+            "response": "Teknisyen tekrar gönderildi, drenaj hattı temizlendi.",
+            "created_at": "2025-11-24 10:15:00",
+            "resolved_at": "2025-11-25 11:00:00",
+            "response_by": 1
+        },
+        {
+            "id": 3,
+            "request_id": 3,
+            "message": "Format sonrası bazı dosyalarım kaybolmuş, yedekleme yapılacağı söylenmişti.",
+            "status": "İnceleniyor",
+            "response": null,
+            "created_at": "2025-11-30 16:00:00",
+            "resolved_at": null,
+            "response_by": null
+        },
+        {
+            "id": 4,
+            "request_id": 4,
+            "message": "Teknisyen randevu saatine gelmedi, 2 saat bekledim.",
+            "status": "İnceleniyor",
+            "response": null,
+            "created_at": "2025-12-02 14:00:00",
+            "resolved_at": null,
+            "response_by": null
+        },
+        {
+            "id": 5,
+            "request_id": 5,
+            "message": "Fiyat teklifi çok yüksek, başka bir serviste yarı fiyatına yapılıyor.",
+            "status": "Beklemede",
+            "response": null,
+            "created_at": "2025-12-03 09:30:00",
+            "resolved_at": null,
+            "response_by": null
+        }
+    ],
     "cookies": []
 }

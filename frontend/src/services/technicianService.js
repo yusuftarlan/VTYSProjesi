@@ -1,0 +1,50 @@
+import { API_URL, IS_DEV, getMockUsers, getMockDetails } from './mockDb';
+
+export const technicianService = {
+    // 1. Teknisyenleri getir
+    getTechnicians: async (filters = {}) => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            const users = getMockUsers();
+            const details = getMockDetails();
+
+            let techs = users
+                .filter(u => u.role_id === 1)
+                .map(user => {
+                    const detail = details.find(d => d.technician_id === user.id) || {
+                        profession: "Belirtilmedi", technician_score: 0, experience_years: 0, availability_status: false
+                    };
+                    return { ...user, ...detail };
+                });
+
+            if (filters.q) {
+                const q = filters.q.toLowerCase();
+                techs = techs.filter(t =>
+                    t.first_name.toLowerCase().includes(q) || t.surname.toLowerCase().includes(q)
+                );
+            }
+            if (filters.profession) techs = techs.filter(t => t.profession === filters.profession);
+            if (filters.city) techs = techs.filter(t => t.home_address.toLowerCase().includes(filters.city.toLowerCase()));
+            if (filters.minScore) techs = techs.filter(t => t.technician_score >= parseFloat(filters.minScore));
+            if (filters.onlyAvailable === true || filters.onlyAvailable === 'true') techs = techs.filter(t => t.availability_status === true);
+
+            return techs;
+        }
+
+        const params = new URLSearchParams(filters);
+        const response = await fetch(`${API_URL}/auth/technicians?${params.toString()}`);
+        return await response.json();
+    },
+
+    // 2. Uzmanlıkları getir
+    getProfessions: async () => {
+        if (IS_DEV) {
+            const details = getMockDetails();
+            const uniqueProfessions = [...new Set(details.map(d => d.profession))];
+            return uniqueProfessions.sort();
+        }
+
+        const response = await fetch(`${API_URL}/auth/technicians/professions`);
+        return await response.json();
+    }
+};

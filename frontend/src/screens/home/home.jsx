@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../services/authService';
+import { technicianService } from '../../services/technicianService';
 import AppointmentPopup from './appintment_popup';
 import './Home.css';
 
@@ -40,7 +40,7 @@ const HomeScreen = () => {
     // Çıkış yap
     const handleLogout = async () => {
         try {
-            await authService.logout();
+            await technicianService.logout();
             navigate('/login');
         } catch (error) {
             console.error("Çıkış yapılırken hata:", error);
@@ -55,7 +55,7 @@ const HomeScreen = () => {
     const fetchTechnicians = async () => {
         setLoading(true);
         try {
-            const data = await authService.getTechnicians({
+            const data = await technicianService.getTechnicians({
                 q: searchQuery,
                 minExp: filters.minExp,
                 maxExp: filters.maxExp,
@@ -102,7 +102,7 @@ const HomeScreen = () => {
 
             // 2. Uzmanlık Listesini Çek
             try {
-                const profs = await authService.getProfessions();
+                const profs = await technicianService.getProfessions();
                 if (Array.isArray(profs)) setProfessionList(profs);
             } catch (err) {
                 console.error("Meslekler çekilemedi", err);
