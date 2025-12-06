@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import { testDBConnection } from './db/config/db.js';
+import requestRoutes from './routes/requestRoutes.js';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ testDBConnection();
 
 // Rotalar
 app.use('/api/auth', authRoutes);
+app.use('/api', requestRoutes);
 
 // Test Route
 app.get('/', (req, res) => {

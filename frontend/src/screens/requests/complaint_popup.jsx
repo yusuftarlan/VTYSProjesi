@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authService } from '../../services/authService';
+import { requestService } from '../../services/requestService';
 import './complaint_popup.css';
 
 const ComplaintPopup = ({ request, onClose, onSuccess }) => {
@@ -19,7 +19,7 @@ const ComplaintPopup = ({ request, onClose, onSuccess }) => {
         }
 
         try {
-            await authService.createComplaint(request.id, message);
+            await requestService.createComplaint(request.id, message);
 
             if (onSuccess) onSuccess();
             onClose();

@@ -32,7 +32,7 @@ export const technicianService = {
         }
 
         const params = new URLSearchParams(filters);
-        const response = await fetch(`${API_URL}/auth/technicians?${params.toString()}`);
+        const response = await fetch(`${API_URL}/auth/technicians?${params.toString()}` ,  {credentials: 'include'});
         return await response.json();
     },
 
@@ -44,7 +44,7 @@ export const technicianService = {
             return uniqueProfessions.sort();
         }
 
-        const response = await fetch(`${API_URL}/auth/technicians/professions`);
+        const response = await fetch(`${API_URL}/auth/technicians/professions` , {credentials: 'include'});
         return await response.json();
     }
 };

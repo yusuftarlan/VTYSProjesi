@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { technicianService } from '../../services/technicianService';
 import './Login.css';
 
 const LoginScreen = () => {
@@ -73,7 +74,7 @@ const LoginScreen = () => {
     useEffect(() => {
         const fetchProfessions = async () => {
             try {
-                const profs = await authService.getProfessions();
+                const profs = await technicianService.getProfessions();
                 if (Array.isArray(profs)) {
                     setProfessionList(profs);
                 } else {

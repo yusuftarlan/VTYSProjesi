@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authService } from '../../services/authService';
+import { requestService } from '../../services/requestService';
 import './appintment_popup.css';
 
 const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
@@ -29,9 +29,10 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
             return;
         }
 
+
         try {
-            await authService.createOrder({
-                technician_id: technician.id,
+            await requestService.createOrder({
+                technician_id: technician.technician_id,
                 brand: formData.brand,
                 product_name: formData.productName,
                 description: formData.description,

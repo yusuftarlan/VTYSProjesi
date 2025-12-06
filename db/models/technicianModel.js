@@ -28,7 +28,7 @@ export async function getTechniciansWithFilters(filters) {
 
     // 1. İsim Arama (Ad veya Soyad)
     if (filters.q) {
-        sql += ` AND (u.first_name LIKE ? OR u.surname LIKE ? OR CONCAT(u.first_name, ' ', u.surname) LIKE ?)`;
+        sql += ` AND (u.first_name LIKE ? OR u.surname LIKE ?)`;
         const searchTerm = `%${filters.q}%`;
         params.push(searchTerm, searchTerm, searchTerm);
     }

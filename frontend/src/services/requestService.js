@@ -41,6 +41,7 @@ export const requestService = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData),
+            credentials: 'include'
         });
         return await response.json();
     },
@@ -119,7 +120,15 @@ export const requestService = {
         }
 
         // Prod
-        const response = await fetch(`${API_URL}/requests/my-requests`);
+        const response = await fetch(`${API_URL}/requests/my-requests`, {
+            method: 'GET',
+            credentials: 'include' // Cookie gönderimi için şart
+        });
+
+        // EĞER CEVAP BAŞARISIZSA (401, 500 vb.) HATA FIRLAT
+        if (!response.ok) {
+            throw new Error('Talepler çekilemedi');
+        }
         return await response.json();
     },
 
@@ -148,7 +157,8 @@ export const requestService = {
         const response = await fetch(`${API_URL}/requests/${requestId}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, newPrice })
+            body: JSON.stringify({ action, newPrice }) ,
+            credentials: 'include'
         });
         return await response.json();
     },
@@ -169,7 +179,8 @@ export const requestService = {
         const response = await fetch(`${API_URL}/requests/${requestId}/rate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ score })
+            body: JSON.stringify({ score }),
+            credentials: 'include'
         });
         return await response.json();
     },
@@ -200,7 +211,8 @@ export const requestService = {
         const response = await fetch(`${API_URL}/requests/${requestId}/message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content })
+            body: JSON.stringify({ content }),
+            credentials: 'include'
         });
         return await response.json();
     },
@@ -231,7 +243,8 @@ export const requestService = {
         const response = await fetch(`${API_URL}/complaints`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ request_id: requestId, message })
+            body: JSON.stringify({ request_id: requestId, message }),
+            credentials: 'include'
         });
         return await response.json();
     }

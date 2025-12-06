@@ -7,7 +7,7 @@ console.log(process.env.DB_PASSWORD);
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: "YSifre123.",
+    password: process.env.DB_PASSWORD,
     database: "test_db",
     connectionLimit: 10, // aynı anda max 10 bağlantı
 });

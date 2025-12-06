@@ -2,7 +2,12 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import * as userModel from '../models/userModel.js';
 import * as technicianModel from '../models/technicianModel.js';
+import * as messageModel from '../models/messageModel.js';
 import * as cookiesModel from '../models/cookiesModel.js';
+import * as requestModel from '../models/requestModel.js';
+import * as complainsModel from '../models/complainsModel.js';
+import * as productModel from '../models/productModel.js';
+
 
 // --- REGISTER ---
 export const register = async (req, res) => {
@@ -74,6 +79,7 @@ export const login = async (req, res) => {
         res.cookie('access_token', token, {
             httpOnly: true,
             secure: false,
+            sameSite: 'lax',
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -170,5 +176,143 @@ export const getProfessions = async (req, res) => {
     } catch (error) {
         console.error("Get Professions Error:", error);
         res.status(500).json({ message: "Sunucu hatası" });
+    }
+};
+
+
+
+// 1. Sipariş Oluştur
+export const createOrder = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        if (!session) return res.status(401).json({ message: "Oturum açmalısınız" });
+
+        const { technician_id, model_id, brand, product_name, description, price_offer } = req.body;
+
+        // Ana talep kaydını oluştur
+        const requestResult = await requestModel.createRequest(session.user_id, technician_id, model_id || null);
+        const requestId = requestResult.insertId;
+
+        // Detayları kaydet
+        let detailText = description;
+        if (!model_id) {
+             detailText = `[${brand} - ${product_name}] ${description}`;
+        }
+
+        await requestModel.createRequestDetail(requestId, detailText, price_offer || null);
+
+        res.json({ success: true, orderId: requestId });
+    } catch (error) {
+        console.error("Create Order Error:", error);
+        res.status(500).json({ message: "Sipariş oluşturulamadı" });
+    }
+};
+
+// 2. Müşteri Taleplerini Getir (Mesajlarla Birlikte)
+export const getCustomerRequests = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        if (!session) return res.status(401).json({ message: "Yetkisiz" });
+
+        const requests = await userModel.getAllServiceRequestsByCustomerID(session.user_id);
+
+        const enrichedRequests = await Promise.all(requests.map(async (req) => {
+            const messages = await messageModel.getAllMessagesByServiceId(req.id);
+            
+            const formattedMessages = messages.map(m => ({
+                id: m.id,
+                content: m.message, 
+                date: m.date,
+                senderName: m.sender_id === session.user_id ? "Ben" : `${m.first_name}`,
+                isMe: m.sender_id === session.user_id
+            }));
+
+            let uiStatus = 'waiting_offer';
+            if (req.request_status_id === 3) uiStatus = 'completed';
+            else if (req.request_status_id === 2) uiStatus = 'agreed';
+            else if (req.request_status_id === 1 && req.price) uiStatus = 'offer_received';
+
+            return {
+                id: req.id,
+                technician_name: `${req.tech_name} ${req.tech_surname}`,
+                profession: req.tech_profession,
+                date: req.request_date,
+                status: uiStatus,
+                price: req.price,
+                service_score: req.service_score,
+                details: req.detail || (req.product_name ? `${req.brand} ${req.product_name}` : "Detay yok"),
+                messages: formattedMessages
+            };
+        }));
+
+        res.json(enrichedRequests);
+
+    } catch (error) {
+        console.error("Get My Requests Error:", error);
+        res.status(500).json({ message: "Talepler alınamadı" });
+    }
+};
+
+// 3. Durum Güncelleme
+export const updateRequestStatus = async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        const { action, newPrice } = req.body;
+
+        if (action === 'accept') {
+            await requestModel.setRequestStatus_DEALOK(requestId);
+        } else if (action === 'new_offer') {
+            await requestModel.setRequestPrice(requestId, newPrice);
+        } else if (action === 'reject') {
+            await requestModel.setRequestStatus_COMPLETED(requestId);
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Update Status Error:", error);
+        res.status(500).json({ message: "Güncellenemedi" });
+    }
+};
+
+// 4. Puanlama
+export const rateTechnician = async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        const { score } = req.body;
+        await requestModel.setServiceScore(requestId, score);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ message: "Puanlanamadı" });
+    }
+};
+
+// 5. Mesaj Gönder
+export const sendMessage = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        if (!session) return res.status(401).json({ message: "Yetkisiz" });
+
+        const requestId = req.params.id;
+        const { content } = req.body;
+
+        await messageModel.createMessage(requestId, session.user_id, content);
+        
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ message: "Mesaj gönderilemedi" });
+    }
+};
+
+// 6. Şikayet Oluştur
+export const createComplaint = async (req, res) => {
+    try {
+        const { request_id, message } = req.body;
+        await complaintModel.createComplain(request_id, message);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ message: "Şikayet oluşturulamadı" });
     }
 };

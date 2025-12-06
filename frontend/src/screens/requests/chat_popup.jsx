@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { authService } from '../../services/authService';
+import { requestService } from '../../services/requestService';
 import './chat_popup.css';
 
 const ChatPopup = ({ request, onClose }) => {
@@ -20,7 +20,7 @@ const ChatPopup = ({ request, onClose }) => {
         if (!newMessage.trim()) return;
 
         try {
-            await authService.sendMessage(request.id, newMessage);
+            await requestService.sendMessage(request.id, newMessage);
 
             const addedMsg = {
                 id: Date.now(),

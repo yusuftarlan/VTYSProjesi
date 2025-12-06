@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { technicianService } from '../../services/technicianService';
 import AppointmentPopup from './appintment_popup';
 import './Home.css';
+import { authService } from '../../services/authService';
 
 const HomeScreen = () => {
     // Çeviri kütüphanesini başlatıyoruz
@@ -40,7 +41,7 @@ const HomeScreen = () => {
     // Çıkış yap
     const handleLogout = async () => {
         try {
-            await technicianService.logout();
+            await authService.logout();
             navigate('/login');
         } catch (error) {
             console.error("Çıkış yapılırken hata:", error);
