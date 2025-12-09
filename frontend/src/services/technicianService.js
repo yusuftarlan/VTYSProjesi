@@ -1,4 +1,4 @@
-import { API_URL, IS_DEV, getMockUsers, getMockDetails } from './mockDb';
+import { API_URL, IS_DEV, getMockUsers, getMockDetails, getMockProducts, getMockProductModels } from './mockDb';
 
 export const technicianService = {
     // 1. Teknisyenleri getir
@@ -32,7 +32,7 @@ export const technicianService = {
         }
 
         const params = new URLSearchParams(filters);
-        const response = await fetch(`${API_URL}/auth/technicians?${params.toString()}` ,  {credentials: 'include'});
+        const response = await fetch(`${API_URL}/auth/technicians?${params.toString()}`, { credentials: 'include' });
         return await response.json();
     },
 
@@ -44,7 +44,29 @@ export const technicianService = {
             return uniqueProfessions.sort();
         }
 
-        const response = await fetch(`${API_URL}/auth/technicians/professions` , {credentials: 'include'});
+        const response = await fetch(`${API_URL}/auth/technicians/professions`, { credentials: 'include' });
         return await response.json();
+    },
+
+    // 3. Ürün Listesini Getir
+    getProducts: async () => {
+        if (IS_DEV) {
+            return getMockProducts();
+        }
+
+        // Prod
+    },
+
+    // 4. Modelleri Getir 
+    getModels: async (productId = null) => {
+        if (IS_DEV) {
+            const models = getMockProductModels();
+            if (productId) {
+                return models.filter(m => m.product_id === parseInt(productId));
+            }
+            return models;
+        }
+
+        // Prod
     }
 };

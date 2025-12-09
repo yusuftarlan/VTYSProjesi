@@ -29,7 +29,8 @@ export const requestService = {
                 request_status_id: 1, // 1: Başvuru Alındı
                 request_date: new Date().toISOString(),
                 completed_date: null,
-                service_score: null
+                service_score: null,
+                model_text: orderData.model,
             };
             requests.push(newOrder);
             saveMockRequests(requests);
@@ -157,7 +158,7 @@ export const requestService = {
         const response = await fetch(`${API_URL}/requests/${requestId}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, newPrice }) ,
+            body: JSON.stringify({ action, newPrice }),
             credentials: 'include'
         });
         return await response.json();
@@ -247,5 +248,44 @@ export const requestService = {
             credentials: 'include'
         });
         return await response.json();
+    },
+
+    // 7. Kullanıcı şikayetleri
+    getCustomerComplaints: async () => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const session = localStorage.getItem('mock_session');
+            if (!session) throw new Error("Oturum açılmamış");
+            const currentUser = JSON.parse(session);
+
+            const complaints = getMockComplaints();
+            const requests = getMockRequests();
+            const users = getMockUsers();
+
+            const userRequestIds = requests
+                .filter(r => r.customer_id === currentUser.id)
+                .map(r => r.id);
+
+            const userComplaints = complaints.filter(c => userRequestIds.includes(c.request_id));
+
+            return userComplaints.map(comp => {
+                const request = requests.find(r => r.id === comp.request_id);
+                const techUser = users.find(u => u.id === request.technician_id);
+
+                return {
+                    id: comp.id,
+                    request_id: comp.request_id,
+                    technician_name: techUser ? `${techUser.first_name} ${techUser.surname}` : 'Bilinmeyen Usta',
+                    message: comp.message,
+                    response: comp.response,
+                    status: comp.status,
+                    date: new Date(comp.created_at).toLocaleDateString('tr-TR'),
+                    resolved_date: comp.resolved_at ? new Date(comp.resolved_at).toLocaleDateString('tr-TR') : null
+                };
+            }).reverse();
+        }
+
+        // Prod
     }
 };

@@ -133,7 +133,7 @@ textarea.form-input {
 .checkbox-group {
     display: flex;
     align-items: center;
-    gap: 1vh;
+    gap: 12px;
     margin: 0.5vh 0;
     font-size: clamp(0.7rem, 1.8vh, 1rem);
 }
@@ -142,6 +142,48 @@ textarea.form-input {
     width: 2vh;
     height: 2vh;
     cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+
+    border: 2px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    margin: 0;
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+    background-color: var(--button-bg);
+    border-color: var(--button-bg);
+}
+
+.checkbox-group input[type="checkbox"]:checked::after {
+    content: '✔';
+    color: white;
+    font-size: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+    user-select: none;
+    color: var(--text-color);
+    line-height: 1.2;
+    margin: 0;
 }
 
 /* Buton */

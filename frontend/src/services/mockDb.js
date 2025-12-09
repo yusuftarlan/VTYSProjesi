@@ -25,6 +25,7 @@ export const getMockRequests = () => getLocalOrSet('mock_db_requests', fakeDb.se
 export const saveMockRequests = (data) => saveLocal('mock_db_requests', data);
 
 // 4. Ürün Modelleri
+export const getMockProducts = () => fakeDb.products;
 export const getMockProductModels = () => fakeDb.product_models;
 
 // 5. Fiyat ve Detaylar
@@ -37,3 +38,4 @@ export const saveMockMessages = (data) => saveLocal('mock_db_messages', data);
 // 7. Şikayetler
 export const getMockComplaints = () => getLocalOrSet('mock_db_complaints', fakeDb.complaints);
 export const saveMockComplaints = (data) => saveLocal('mock_db_complaints', data);
+

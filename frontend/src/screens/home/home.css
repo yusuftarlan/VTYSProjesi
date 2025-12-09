@@ -98,6 +98,9 @@
     align-items: center;
     padding-top: 1vh;
     border-top: 1px solid var(--input-border);
+
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 .filter-group {
@@ -225,4 +228,24 @@
     display: flex;
     gap: 15px;
     align-items: center;
+}
+
+.clear-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.3s;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-btn:hover {
+    background-color: #c0392b;
 }

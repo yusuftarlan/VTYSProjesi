@@ -2,27 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { technicianService } from '../../services/technicianService';
+import { authService } from '../../services/authService';
 import AppointmentPopup from './appintment_popup';
 import './Home.css';
-import { authService } from '../../services/authService';
 
 const HomeScreen = () => {
-    // Çeviri kütüphanesini başlatıyoruz
     const { t } = useTranslation();
     const navigate = useNavigate();
 
     const [theme, setTheme] = useState('dark');
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Filtreleme koşulları
-    const [filters, setFilters] = useState({
+    // Filtreleme koşulları (Ürün, Marka, Model kaldırıldı)
+    const initialFilters = {
         minExp: "",
         maxExp: "",
         city: "",
         minScore: "",
         onlyAvailable: false,
         profession: ""
-    });
+    };
+
+    const [filters, setFilters] = useState(initialFilters);
 
     const [technicians, setTechnicians] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -48,29 +49,27 @@ const HomeScreen = () => {
         }
     };
 
+    // Talepleri aç
     const handleGoToRequests = () => {
         navigate('/requests');
     };
 
-    // Araama işlemi
+    // Şikayetleri aç
+    const handleGoToComplaints = () => {
+        navigate('/complaints');
+    };
+
+    // Arama işlemi
     const fetchTechnicians = async () => {
         setLoading(true);
         try {
             const data = await technicianService.getTechnicians({
                 q: searchQuery,
-                minExp: filters.minExp,
-                maxExp: filters.maxExp,
-                city: filters.city,
-                minScore: filters.minScore,
-                onlyAvailable: filters.onlyAvailable,
-                profession: filters.profession
+                ...filters
             });
             setTechnicians(data);
-        } catch (error) {
-            console.error("Hata:", error);
-        } finally {
-            setLoading(false);
-        }
+        } catch (error) { console.error("Hata:", error); }
+        finally { setLoading(false); }
     };
 
     useEffect(() => {
@@ -83,8 +82,16 @@ const HomeScreen = () => {
     };
 
     const handleFilterChange = (e) => {
-        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        setFilters({ ...filters, [e.target.name]: value });
+        const { name, value, type, checked } = e.target;
+        const val = type === 'checkbox' ? checked : value;
+        setFilters(prev => ({ ...prev, [name]: val }));
+    };
+
+    // Filtreleri Temizle Butonu (KALDI)
+    const clearFilters = () => {
+        setFilters(initialFilters);
+        setSearchQuery("");
+        technicianService.getTechnicians({ q: "", ...initialFilters }).then(setTechnicians);
     };
 
     const handleBookClick = (tech) => {
@@ -95,19 +102,13 @@ const HomeScreen = () => {
         alert("Teklifiniz başarıyla ustaya iletildi!");
     };
 
-    // Sayfa ile uzmanlıkları yükle
+    // Başlangıç verileri (Sadece Meslekler)
     useEffect(() => {
         const initData = async () => {
-            // 1. Ustaları Çek
-            fetchTechnicians();
-
-            // 2. Uzmanlık Listesini Çek
             try {
                 const profs = await technicianService.getProfessions();
                 if (Array.isArray(profs)) setProfessionList(profs);
-            } catch (err) {
-                console.error("Meslekler çekilemedi", err);
-            }
+            } catch (err) { console.error("Veri yükleme hatası", err); }
         };
         initData();
     }, []);
@@ -118,8 +119,6 @@ const HomeScreen = () => {
             <header className="home-header">
                 <h1 className="home-title">{t('home.title')}</h1>
                 <div className="header-actions">
-
-                    {/* Taleplerim Butonu */}
                     <button onClick={handleGoToRequests} className="theme-btn-fixed" title="Taleplerim">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -130,7 +129,14 @@ const HomeScreen = () => {
                         </svg>
                     </button>
 
-                    {/* Tema Butonu */}
+                    <button onClick={handleGoToComplaints} className="theme-btn-fixed" title="Şikayetlerim">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </button>
+
                     <button onClick={toggleTheme} className="theme-btn-fixed" title="Temayı Değiştir">
                         {theme === 'light' ? (
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -139,7 +145,6 @@ const HomeScreen = () => {
                         )}
                     </button>
 
-                    {/* Çıkış Yap Butonu */}
                     <button onClick={handleLogout} className="theme-btn-fixed" title={t('home.logout')} style={{ color: '#ff4d4d', borderColor: '#ff4d4d' }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -161,6 +166,11 @@ const HomeScreen = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <button type="submit" className="search-btn">{t('home.searchButton')}</button>
+
+                        {/* TEMİZLE BUTONU */}
+                        <button type="button" onClick={clearFilters} className="clear-btn" title="Filtreleri Temizle">
+                            ✕
+                        </button>
                     </div>
 
                     <div className="filters-wrapper">

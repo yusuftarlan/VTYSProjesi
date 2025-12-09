@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginScreen from './screens/login/login';
 import Home from './screens/home/Home';
 import RequestsScreen from './screens/requests/requests';
+import ComplaintsScreen from './screens/complaints/complaints';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -39,6 +40,13 @@ function App() {
             element={
               <ProtectedRoute>
                 <RequestsScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/complaints"
+            element={
+              <ProtectedRoute>
+                <ComplaintsScreen />
               </ProtectedRoute>
             }
           />
