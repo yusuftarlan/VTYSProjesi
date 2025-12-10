@@ -54,7 +54,8 @@ export const technicianService = {
             return getMockProducts();
         }
 
-        // Prod
+        const response = await fetch(`${API_URL}/types`, { credentials: 'include' });
+        return await response.json();
     },
 
     // 4. Modelleri Getir 
@@ -67,6 +68,7 @@ export const technicianService = {
             return models;
         }
 
-        // Prod
+        const response = await fetch(`${API_URL}/brands`, { credentials: 'include' });
+        return await response.json();
     }
 };

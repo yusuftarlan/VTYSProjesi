@@ -299,7 +299,7 @@ const HomeScreen = () => {
                                 {tech.availability_status ? t('home.card.available') : t('home.card.busy')}
                             </div>
 
-                            {tech.availability_status && (
+                            {tech.availability_status === 1 && (
                                 <button
                                     className="book-btn"
                                     onClick={() => handleBookClick(tech)}

@@ -18,12 +18,12 @@ export async function getProductNameByServiceID(serviceRequest_id) {
 
 //Tüm ürün türlerini getirir
 export async function getAllProductTypes() {
-    const [rows] = await pool.query(`SELECT DISTINCT product_name FROM products`);
+    const [rows] = await pool.query(`SELECT DISTINCT id , product_name FROM products`);
     return rows;
 }
 
 //Tüm marka türlerini getirir
 export async function getAllBrands() {
-    const [rows] = await pool.query(`SELECT DISTINCT brand FROM product_models ORDER BY 1 ASC`);
+    const [rows] = await pool.query(`SELECT DISTINCT id , brand  FROM product_models ORDER BY 1 ASC`);
     return rows;
 }

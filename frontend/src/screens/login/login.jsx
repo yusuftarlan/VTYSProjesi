@@ -76,7 +76,7 @@ const LoginScreen = () => {
             try {
                 const profs = await technicianService.getProfessions();
                 if (Array.isArray(profs)) {
-                    setProfessionList(profs);
+                    setProfessionList(profs.filter(p => p));
                 } else {
                     setProfessionList([]);
                 }

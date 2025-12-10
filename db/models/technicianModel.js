@@ -19,7 +19,7 @@ export async function createTechnicianDetail(tech_id, profession, experience_yea
 export async function getTechniciansWithFilters(filters) {
     // Role ID = 1 olan (Teknisyen) kullanıcıları ve detaylarını çek
     let sql = `
-        SELECT t.*, u.first_name, u.surname, u.home_address, u.tel_no 
+        SELECT t.*, u.first_name, u.surname, u.home_address 
         FROM technician_details t
         JOIN users u ON t.technician_id = u.id
         WHERE u.role_id = 1

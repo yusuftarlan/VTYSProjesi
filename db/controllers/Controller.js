@@ -179,6 +179,31 @@ export const getProfessions = async (req, res) => {
     }
 };
 
+export const getProductTypes = async (req, res) => {
+    try {
+        const rows = await productModel.getAllProductTypes();
+       
+        const types = rows.map(row => row.product_name);
+        res.json(types);
+    } catch (error) {
+        console.error("Get Types Error:", error);
+        res.status(500).json({ message: "Sunucu hatası" });
+    }
+};
+
+
+export const getBrands = async (req, res) => {
+    try {
+        const rows = await productModel.getAllBrands();
+       
+        const brands = rows.map(row => row.brand);
+        res.json(brands);
+    } catch (error) {
+        console.error("Get Brands Error:", error);
+        res.status(500).json({ message: "Sunucu hatası" });
+    }
+};
+
 
 
 // 1. Sipariş Oluştur
@@ -188,24 +213,34 @@ export const createOrder = async (req, res) => {
         const session = await cookiesModel.getCookieByToken(token);
         if (!session) return res.status(401).json({ message: "Oturum açmalısınız" });
 
-        const { technician_id, model_id, brand, product_name, description, price_offer } = req.body;
+        // Frontend'den gelen JSON'ı karşılıyoruz
+        // JSON yapısı: { technician_id, brand, product_name, description, price_offer, model_text }
+        const { technician_id, brand, product_name, model_text, model, description, price_offer } = req.body;
 
-        // Ana talep kaydını oluştur
-        const requestResult = await requestModel.createRequest(session.user_id, technician_id, model_id || null);
-        const requestId = requestResult.insertId;
-
-        // Detayları kaydet
-        let detailText = description;
-        if (!model_id) {
-             detailText = `[${brand} - ${product_name}] ${description}`;
+        if (!technician_id) {
+            return res.status(400).json({ message: "Teknisyen ID eksik" });
         }
 
-        await requestModel.createRequestDetail(requestId, detailText, price_offer || null);
+        // Model bilgisi 'model_text' olarak gelebilir, 'model' olarak gelebilir veya boş olabilir.
+        const finalModel = model_text || model || "Model Belirtilmedi";
 
-        res.json({ success: true, orderId: requestId });
+        // Stored Procedure Çağrısı (requestModel.js içindeki fonksiyon)
+        // Sıralama: customer_id, technician_id, product, brand, model, detail, price
+        await requestModel.newCreateRequest(
+            session.user_id,
+            technician_id,
+            product_name,
+            brand,
+            finalModel,
+            description,
+            price_offer
+        );
+
+        res.json({ success: true, message: "Sipariş oluşturuldu" });
+
     } catch (error) {
         console.error("Create Order Error:", error);
-        res.status(500).json({ message: "Sipariş oluşturulamadı" });
+        res.status(500).json({ message: "Sipariş oluşturulamadı: " + error.message });
     }
 };
 
@@ -236,13 +271,13 @@ export const getCustomerRequests = async (req, res) => {
 
             return {
                 id: req.id,
-                technician_name: `${req.tech_name} ${req.tech_surname}`,
-                profession: req.tech_profession,
+                technician_name: req.technician_name,
+                profession: req.profession,
                 date: req.request_date,
                 status: uiStatus,
                 price: req.price,
                 service_score: req.service_score,
-                details: req.detail || (req.product_name ? `${req.brand} ${req.product_name}` : "Detay yok"),
+                details: req.detail || (req.product_name ? `${req.product_name}  ${req.brand} ${req.model_code} ` : "Detay yok"),
                 messages: formattedMessages
             };
         }));
