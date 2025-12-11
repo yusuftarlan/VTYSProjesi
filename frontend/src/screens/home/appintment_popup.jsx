@@ -40,8 +40,7 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
                 // Markaları Çek (Modellerden benzersiz markaları ayıkla)
                 const modelsData = await technicianService.getModels();
                 if (Array.isArray(modelsData)) {
-                    const uniqueBrands = [...new Set(modelsData.map(m => m.brand))];
-                    setBrandList(uniqueBrands.sort());
+                    setBrandList(modelsData);
                 }
             } catch (err) {
                 console.error("Liste verileri çekilemedi", err);
@@ -162,8 +161,8 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
                             style={{ width: '100%', padding: '10px', marginBottom: '5px', borderRadius: '6px', border: '1px solid var(--input-border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-color)' }}
                         >
                             <option value="">Seçiniz...</option>
-                            {productList.map((p) => (
-                                <option key={p.id} value={p.product_name}>{p.product_name}</option>
+                            {productList.map((product , idx) => (
+                                <option key={idx} value={product}>{product}</option>
                             ))}
                             <option value="OTHER_OPTION">Diğer (Listede Yok)</option>
                         </select>
