@@ -224,4 +224,52 @@ export async function getAllTechniciansTenTimesGetComplained() {
     return result;
 }
 
+//Bir ustanın tüm hizmet bilgilerini getirir
+export async function getTechnicianRequests(tech_id) {
+    const [result] = await pool.query(
+        `SELECT s.id, u.first_name, u.surname, 
+        p.product_name, pm.brand, pm.model_code,
+        s.request_date, rs.name, s.service_score, d.detail, d.price
+        FROM service_requests as s 
+        JOIN technician_details as t ON s.technician_id = t.technician_id
+        JOIN users as u ON s.customer_id = u.id
+        JOIN product_models as pm ON s.model_id = pm.id
+        JOIN products as p ON pm.product_id = p.id 
+        JOIN request_statuses as rs ON s.request_status_id = rs.id 
+        JOIN request_details as d ON d.request_id = s.id
+        WHERE s.technician_id= ?`,
+        [tech_id]
+    );
+    return result;
+}
 
+//Ustaları şikayet sayılarına göre sıralar
+export async function getTechniciansByComplainCount() {
+    const [result] = await pool.query(
+        `SELECT t.*, sub.sikayet_sayisi
+        FROM technician_details t
+        JOIN (
+            SELECT s.technician_id,
+            COUNT(*) as sikayet_sayisi
+            FROM complaints c
+            JOIN service_requests s ON s.id = c.request_id
+            GROUP BY s.technician_id
+        ) sub ON t.technician_id = sub.technician_id
+        ORDER BY sub.sikayet_sayisi DESC;`,
+        [profession]
+    );
+    return result;
+}
+
+//Ustaları şikayet sayılarına göre sıralar
+export async function getTechnicianComplainCount(tech_id) {
+    const [result] = await pool.query(
+        `SELECT COUNT(*) as sikayet_sayisi
+        FROM complaints c
+        JOIN service_requests s ON s.id = c.request_id
+        WHERE technician_id = ?
+        GROUP BY s.technician_id`,
+        [tech_id]
+    );
+    return result;
+}

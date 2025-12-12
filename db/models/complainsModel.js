@@ -24,5 +24,8 @@ export async function getComplain(serviceRequest_id) {
     return result;
 }
 
-// Test için
-
+// Cevaplanmamış şikayetleri getirir
+export async function getAllNonClosedComplain() {
+    const [result] = await pool.query(`SELECT * FROM complaints WHERE response_by is NULL`);
+    return result;
+}
