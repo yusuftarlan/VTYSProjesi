@@ -400,5 +400,51 @@ export const requestService = {
             return { success: true, newStatus: status };
         }
         // Prod
+    },
+
+    getAllComplaintsForAdmin: async () => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const complaints = getMockComplaints();
+            const requests = getMockRequests();
+            const users = getMockUsers();
+
+            return complaints.map(comp => {
+                const req = requests.find(r => r.id === comp.request_id);
+                const tech = users.find(u => u.id === req.technician_id);
+                const customer = users.find(u => u.id === req.customer_id);
+
+                return {
+                    id: comp.id,
+                    request_id: comp.request_id,
+                    technician_name: tech ? `${tech.first_name} ${tech.surname}` : 'Silinmiş Usta',
+                    customer_name: customer ? `${customer.first_name} ${customer.surname}` : 'Silinmiş Müşteri',
+                    message: comp.message,
+                    response: comp.response,
+                    status: comp.status,
+                    date: new Date(comp.created_at).toLocaleDateString('tr-TR'),
+                    resolved_date: comp.resolved_at ? new Date(comp.resolved_at).toLocaleDateString('tr-TR') : null
+                };
+            }).reverse();
+        }
+        // Prod API...
+    },
+
+    resolveComplaint: async (complaintId, responseText) => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const complaints = getMockComplaints();
+            const comp = complaints.find(c => c.id === complaintId);
+
+            if (comp) {
+                comp.response = responseText;
+                comp.status = 'Çözüldü';
+                comp.resolved_at = new Date().toISOString();
+                comp.response_by = 3;
+                saveMockComplaints(complaints);
+            }
+            return { success: true };
+        }
+        // Prod API...
     }
 };

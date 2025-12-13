@@ -19,7 +19,7 @@ export const authService = {
                 id: user.id,
                 name: user.first_name,
                 surname: user.surname,
-                isTechnician: user.role_id === 1
+                role_id: user.role_id
             };
             localStorage.setItem('mock_session', JSON.stringify(sessionUser));
             return { success: true, user: sessionUser };

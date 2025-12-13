@@ -16,7 +16,7 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
 
     const [brandList, setBrandList] = useState([]);
     const [productList, setProductList] = useState([]);
-    const [allModels, setAllModels] = useState([]);
+    const [allModels, setAllModels] = useState([]); // Tüm modelleri tutacak havuz
 
     // Other
     const [isCustomBrand, setIsCustomBrand] = useState(false);
@@ -27,20 +27,20 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Veriler yüklenir
+    // 1. Verileri Yükle
     useEffect(() => {
         const initData = async () => {
             try {
-                // Ürün Kategorilerini Çek (Cep Telefonu, Klima vs.)
+                // Ürün Kategorilerini Çek
                 const productsData = await technicianService.getProducts();
                 if (Array.isArray(productsData)) {
                     setProductList(productsData);
                 }
 
-                // Markaları Çek (Modellerden benzersiz markaları ayıkla)
+                // Tüm Modelleri Çek
                 const modelsData = await technicianService.getModels();
                 if (Array.isArray(modelsData)) {
-                    setBrandList(modelsData);
+                    setAllModels(modelsData);
                 }
             } catch (err) {
                 console.error("Liste verileri çekilemedi", err);
@@ -49,28 +49,37 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
         initData();
     }, []);
 
-    // Dinamik değişiklik algılar
+    // 2. Marka Listesini Dinamik Güncelle
     useEffect(() => {
-        // Tüm ürünler
+        // Eğer modeller henüz yüklenmediyse işlem yapma
+        if (allModels.length === 0) return;
+
+        let filteredBrands = [];
+
+        // Eğer ürün seçilmediyse veya özel ürün giriliyorsa -> Tüm markaları göster
         if (isCustomProduct || !formData.productName) {
-            const allBrands = [...new Set(allModels.map(m => m.brand))];
-            setBrandList(allBrands.sort());
-            return;
-        }
-
-        // Ürüne göre product idsi
-        const selectedProductObj = productList.find(p => p.product_name === formData.productName);
-
-        if (selectedProductObj) {
-            // Bu ürün ID'sine ait modelleri filtrele
-            const filteredModels = allModels.filter(m => m.product_id === selectedProductObj.id);
-
-            // Filtrelenen modellerden markaları çıkar
-            const filteredBrands = [...new Set(filteredModels.map(m => m.brand))];
-            setBrandList(filteredBrands.sort());
+            filteredBrands = [...new Set(allModels.map(m => m.brand))];
         } else {
-            setBrandList([]);
+            // Seçilen ürüne ait modelleri bul
+            const selectedProductObj = productList.find(p => p.product_name === formData.productName || p === formData.productName);
+
+            if (selectedProductObj) {
+                // Mock veride product_id kullanılıyor
+                const productId = selectedProductObj.id || null;
+
+                if (productId) {
+                    const filteredModels = allModels.filter(m => m.product_id === productId);
+                    filteredBrands = [...new Set(filteredModels.map(m => m.brand))];
+                } else {
+                    // ID yoksa tüm markalar (fallback)
+                    filteredBrands = [...new Set(allModels.map(m => m.brand))];
+                }
+            } else {
+                filteredBrands = [...new Set(allModels.map(m => m.brand))];
+            }
         }
+
+        setBrandList(filteredBrands.sort());
 
     }, [formData.productName, productList, allModels, isCustomProduct]);
 
@@ -88,8 +97,8 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
     const handleProductSelect = (e) => {
         const value = e.target.value;
 
-        // Marka sıfırlanır
-        setFormData(prev => ({ ...prev, brand: '' }));
+        // Ürün değişince markayı sıfırla
+        setFormData(prev => ({ ...prev, productName: '', brand: '' }));
         setIsCustomBrand(false);
 
         if (value === 'OTHER_OPTION') {
@@ -106,7 +115,6 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
         setError('');
         setLoading(true);
 
-        // Validasyon
         if (!formData.brand || !formData.productName || !formData.model || !formData.description || !formData.offerPrice) {
             setError('Lütfen tüm alanları doldurunuz.');
             setLoading(false);
@@ -123,9 +131,8 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
                 model: formData.model,
             });
 
-            // Başarılı olursa
             if (onSuccess) onSuccess();
-            onClose(); // Popup'ı kapat
+            onClose();
         } catch (err) {
             console.error(err);
             setError(err.message || 'Bir hata oluştu.');
@@ -151,19 +158,21 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* --- ÜRÜN SEÇİMİ (DROPDOWN + TEXT) --- */}
+                    {/* ÜRÜN SEÇİMİ */}
                     <div className="form-group">
                         <label>Ürün Türü</label>
                         <select
                             className="form-input"
                             onChange={handleProductSelect}
                             value={isCustomProduct ? 'OTHER_OPTION' : formData.productName}
-                            style={{ width: '100%', padding: '10px', marginBottom: '5px', borderRadius: '6px', border: '1px solid var(--input-border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-color)' }}
+                            style={{ width: '100%', padding: '10px', marginBottom: '5px' }}
                         >
                             <option value="">Seçiniz...</option>
-                            {productList.map((product , idx) => (
-                                <option key={idx} value={product}>{product}</option>
-                            ))}
+                            {productList.map((product, idx) => {
+                                // Mock veride product obje olabilir ({id:1, product_name:"..."}) veya string olabilir
+                                const pName = typeof product === 'object' ? product.product_name : product;
+                                return <option key={idx} value={pName}>{pName}</option>;
+                            })}
                             <option value="OTHER_OPTION">Diğer (Listede Yok)</option>
                         </select>
 
@@ -173,21 +182,20 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
                                 name="productName"
                                 value={formData.productName}
                                 onChange={handleChange}
-                                placeholder="Ürün türünü yazınız (Örn: Kahve Makinesi)"
-                                autoFocus
+                                placeholder="Ürün türünü yazınız"
                                 style={{ marginTop: '5px' }}
                             />
                         )}
                     </div>
 
-                    {/* --- MARKA SEÇİMİ (DROPDOWN + TEXT) --- */}
+                    {/* MARKA SEÇİMİ */}
                     <div className="form-group">
                         <label>Marka</label>
                         <select
                             className="form-input"
                             onChange={handleBrandSelect}
                             value={isCustomBrand ? 'OTHER_OPTION' : formData.brand}
-                            style={{ width: '100%', padding: '10px', marginBottom: '5px', borderRadius: '6px', border: '1px solid var(--input-border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-color)' }}
+                            style={{ width: '100%', padding: '10px', marginBottom: '5px' }}
                         >
                             <option value="">Seçiniz...</option>
                             {brandList.map((brand, idx) => (
@@ -215,7 +223,7 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
                             name="model"
                             value={formData.model}
                             onChange={handleChange}
-                            placeholder="Örn: S23 Ultra, 14 Pro Max, AR12TX"
+                            placeholder="Örn: S23 Ultra, 14 Pro Max"
                         />
                     </div>
 

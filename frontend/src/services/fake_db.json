@@ -8,7 +8,7 @@
             "passwd": "1234",
             "tel_no": "5321112233",
             "home_address": "İstanbul",
-            "role_id": 3
+            "role_id": 1
         },
         {
             "id": 2,
@@ -58,7 +58,7 @@
             "passwd": "pass567",
             "tel_no": "5321110005",
             "home_address": "Adana",
-            "role_id": 1
+            "role_id": 3
         },
         {
             "id": 7,

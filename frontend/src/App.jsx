@@ -7,6 +7,8 @@ import Home from './screens/home/Home';
 import RequestsScreen from './screens/requests/requests';
 import ComplaintsScreen from './screens/complaints/complaints';
 import TechnicianHome from './screens/technician/technician_home';
+import AdminComplaints from './screens/admin/admin_complaints';
+import AdminHome from './screens/admin/admin_home';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -56,6 +58,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <TechnicianHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-home"
+            element={
+              <ProtectedRoute>
+                <AdminHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-complaints"
+            element={
+              <ProtectedRoute>
+                <AdminComplaints />
               </ProtectedRoute>
             }
           />

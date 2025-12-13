@@ -1,0 +1,120 @@
+.admin-page {
+    padding-bottom: 50px;
+}
+
+.btn-primary-outline {
+    width: auto !important;
+    padding: 0 15px !important;
+    border-radius: 20px !important;
+    font-size: 0.9rem;
+    border-color: #f39c12 !important;
+    color: #f39c12 !important;
+}
+
+.tech-list-admin {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.admin-card-header {
+    border-bottom: 1px solid var(--input-border);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.profession-badge {
+    background-color: var(--input-bg);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--sub-text);
+}
+
+.admin-stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--sub-text);
+    margin-bottom: 3px;
+}
+
+.stat-val {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.star-color {
+    color: #ffc107;
+}
+
+/* Şikayet Sayısı Kutusu */
+.alert-box .stat-val {
+    color: #e74c3c;
+}
+
+/* Kırmızı */
+.safe-box .stat-val {
+    color: #2ecc71;
+}
+
+/* Yeşil */
+
+/* Şikayet Yönetimi Stilleri */
+.admin-response-area {
+    margin-top: 15px;
+    background-color: rgba(0, 0, 0, 0.02);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px dashed var(--input-border);
+}
+
+.response-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--input-border);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+.btn-resolve {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    float: right;
+}
+
+.btn-resolve:hover {
+    background-color: #219150;
+}
+
+.resolved-border {
+    border-left: 4px solid #27ae60;
+}
+
+.active-border {
+    border-left: 4px solid #e74c3c;
+}

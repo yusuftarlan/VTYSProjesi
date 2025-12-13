@@ -70,5 +70,50 @@ export const technicianService = {
 
         const response = await fetch(`${API_URL}/brands`, { credentials: 'include' });
         return await response.json();
+    },
+
+    getTechniciansWithStats: async (filters = {}) => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 400));
+            const users = getMockUsers();
+            const details = getMockDetails();
+            const requests = getMockRequests();
+            const complaints = getMockComplaints();
+
+            // Sadece teknisyenleri al
+            let techs = users.filter(u => u.role_id === 1).map(user => {
+                const detail = details.find(d => d.technician_id === user.id) || {};
+
+                // Bu ustanın işleri (requestleri)
+                const techRequestIds = requests
+                    .filter(r => r.technician_id === user.id)
+                    .map(r => r.id);
+
+                // Bu işlere ait şikayet sayısı
+                const complaintCount = complaints.filter(c => techRequestIds.includes(c.request_id)).length;
+
+                return {
+                    ...user,
+                    ...detail,
+                    complaint_count: complaintCount
+                };
+            });
+
+            // Filtreleme (Arama)
+            if (filters.q) {
+                const q = filters.q.toLowerCase();
+                techs = techs.filter(t =>
+                    t.first_name.toLowerCase().includes(q) ||
+                    t.surname.toLowerCase().includes(q) ||
+                    (t.profession && t.profession.toLowerCase().includes(q))
+                );
+            }
+
+            // Varsayılan Sıralama: Şikayet sayısı (Çoktan aza)
+            techs.sort((a, b) => b.complaint_count - a.complaint_count);
+
+            return techs;
+        }
+        // Prod API...
     }
 };
