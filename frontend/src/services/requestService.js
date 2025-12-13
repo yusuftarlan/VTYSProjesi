@@ -368,12 +368,12 @@ export const requestService = {
                 } else if (action === 'reject') {
                     requests.splice(index, 1); // İptal
                 }
-                // [YENİ] Usta Fiyat Teklifi Verme
+                // Usta Fiyat Teklifi Verme
                 else if (action === 'offer_price') {
                     requests[index].price_offer = parseFloat(payload);
                     // Status hala 1 kalır, müşteri onayı beklenir
                 }
-                // [YENİ] İşi Tamamlama
+                // İşi Tamamlama
                 else if (action === 'complete_job') {
                     requests[index].request_status_id = 3;
                     requests[index].completed_date = new Date().toISOString();
