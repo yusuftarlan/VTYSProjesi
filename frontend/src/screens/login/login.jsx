@@ -57,8 +57,14 @@ const LoginScreen = () => {
 
         try {
             if (isLoginView) {
-                await login(formData.email, formData.password);
-                navigate('/');
+                const response = await login(formData.email, formData.password);
+                if (response && response.user) {
+                    if (response.user.role_id === 1 || response.user.isTechnician) {
+                        navigate('/technician-home');
+                    } else {
+                        navigate('/');
+                    }
+                }
             } else {
                 const success = await register(formData);
                 if (success) {

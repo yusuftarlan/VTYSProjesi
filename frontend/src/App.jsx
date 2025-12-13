@@ -6,6 +6,7 @@ import LoginScreen from './screens/login/login';
 import Home from './screens/home/Home';
 import RequestsScreen from './screens/requests/requests';
 import ComplaintsScreen from './screens/complaints/complaints';
+import TechnicianHome from './screens/technician/technician_home';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -47,6 +48,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ComplaintsScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/technician-home"
+            element={
+              <ProtectedRoute>
+                <TechnicianHome />
               </ProtectedRoute>
             }
           />

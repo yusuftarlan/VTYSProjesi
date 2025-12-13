@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 // fakeApi yerine yeni yazdığımız authService'i import ediyoruz
-import { authService } from '../services/authService'; 
+import { authService } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -32,9 +32,9 @@ export const AuthProvider = ({ children }) => {
             const response = await authService.login(email, password);
             if (response.success) {
                 setUser(response.user);
-                return true;
+                return response;
             }
-            return false;
+            return { success: false, message: "Giriş başarısız" };
         } catch (error) {
             throw error; // Hatayı Login ekranına fırlat (orada ekrana yazdırırız)
         }

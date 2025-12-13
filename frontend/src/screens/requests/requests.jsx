@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestService } from '../../services/requestService';
 import ComplaintPopup from './complaint_popup';
-import ChatPopup from './chat_popup';
+import ChatPopup from '../widgets/chat_popup';
 import './Requests.css';
 
 const RequestsScreen = () => {

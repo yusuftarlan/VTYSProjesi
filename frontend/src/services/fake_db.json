@@ -596,6 +596,32 @@
             "completed_date": null,
             "request_status_id": 1,
             "service_score": null
+        },
+        {
+            "id": 6,
+            "customer_id": 7,
+            "technician_id": 2,
+            "model_id": null,
+            "product_name": "Avize Montajı",
+            "request_date": "2025-12-12 09:30:00",
+            "completed_date": null,
+            "request_status_id": 1,
+            "service_score": null,
+            "description": "Salon için büyük bir avize aldım, montajı için elektrikçi arıyorum.",
+            "price_offer": null
+        },
+        {
+            "id": 7,
+            "customer_id": 8,
+            "technician_id": 2,
+            "model_id": null,
+            "product_name": "Elektrik Tesisatı",
+            "request_date": "2025-12-10 14:00:00",
+            "completed_date": null,
+            "request_status_id": 2,
+            "service_score": null,
+            "description": "Mutfaktaki prizler çalışmıyor, sigorta atıyor.",
+            "price_offer": 1500
         }
     ],
     "request_statuses": [

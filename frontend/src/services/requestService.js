@@ -4,7 +4,7 @@ import {
     getMockUsers, getMockDetails,
     getMockProductModels, getMockRequestDetails,
     getMockMessages, saveMockMessages,
-    getMockComplaints, saveMockComplaints
+    getMockComplaints, saveMockComplaints, saveMockDetails
 } from './mockDb';
 
 export const requestService = {
@@ -286,6 +286,119 @@ export const requestService = {
             }).reverse();
         }
 
+        // Prod
+    },
+
+    getTechnicianRequests: async () => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const session = localStorage.getItem('mock_session');
+            if (!session) throw new Error("Oturum açılmamış");
+            const currentUser = JSON.parse(session);
+
+            const requests = getMockRequests();
+            const users = getMockUsers();
+            const productModels = getMockProductModels();
+            const messagesTable = getMockMessages();
+            const details = getMockDetails(); // Usta detayları
+
+            // Sadece bu ustaya atanmış işleri filtrele
+            const myJobs = requests.filter(r => r.technician_id === currentUser.id);
+
+            // Ustanın güncel müsaitlik durumunu bul
+            const myDetail = details.find(d => d.technician_id === currentUser.id);
+            const isAvailable = myDetail ? myDetail.availability_status : false;
+
+            const mappedJobs = myJobs.map(req => {
+                const customerUser = users.find(u => u.id === req.customer_id);
+                const model = productModels.find(m => m.id === req.model_id);
+
+                // Başlık oluştur
+                let detailText = req.description;
+                if (!detailText) {
+                    detailText = model
+                        ? `${model.brand} ${model.model_code} Arızası`
+                        : (req.product_name ? `${req.brand || ''} ${req.product_name}` : "Arıza Bildirimi");
+                }
+
+                // Mesajları çek
+                const requestMessages = messagesTable
+                    .filter(m => m.request_id === req.id)
+                    .map(m => {
+                        const sender = users.find(u => u.id === m.sender_id);
+                        const isMe = m.sender_id === currentUser.id;
+                        return {
+                            id: m.id,
+                            content: m.content,
+                            date: m.m_date,
+                            senderName: isMe ? "Ben" : (sender ? sender.first_name : "Müşteri"),
+                            isMe: isMe
+                        };
+                    });
+
+                return {
+                    id: req.id,
+                    customer_name: customerUser ? `${customerUser.first_name} ${customerUser.surname}` : 'Gizli Müşteri',
+                    customer_address: customerUser ? customerUser.home_address : '',
+                    customer_phone: customerUser ? customerUser.tel_no : '',
+                    date: new Date(req.request_date).toLocaleDateString('tr-TR'),
+                    status_id: req.request_status_id, // 1: Yeni, 2: Devam, 3: Bitti
+                    price_offer: req.price_offer,
+                    details: detailText,
+                    messages: requestMessages
+                };
+            }).reverse();
+
+            return { jobs: mappedJobs, isAvailable };
+        }
+
+        // Prod 
+    },
+
+    updateRequestStatus: async (requestId, action, payload = null) => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            const requests = getMockRequests();
+            const index = requests.findIndex(r => r.id === requestId);
+
+            if (index !== -1) {
+                // Müşteri Kabul/Red işlemleri (Mevcut)
+                if (action === 'accept') {
+                    requests[index].request_status_id = 2; // İşe başla
+                } else if (action === 'reject') {
+                    requests.splice(index, 1); // İptal
+                }
+                // [YENİ] Usta Fiyat Teklifi Verme
+                else if (action === 'offer_price') {
+                    requests[index].price_offer = parseFloat(payload);
+                    // Status hala 1 kalır, müşteri onayı beklenir
+                }
+                // [YENİ] İşi Tamamlama
+                else if (action === 'complete_job') {
+                    requests[index].request_status_id = 3;
+                    requests[index].completed_date = new Date().toISOString();
+                }
+                saveMockRequests(requests);
+            }
+            return { success: true };
+        }
+        // Prod
+    },
+
+    toggleAvailability: async (status) => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            const session = localStorage.getItem('mock_session');
+            const currentUser = JSON.parse(session);
+
+            const details = getMockDetails();
+            const myDetail = details.find(d => d.technician_id === currentUser.id);
+            if (myDetail) {
+                myDetail.availability_status = status;
+                saveMockDetails(details);
+            }
+            return { success: true, newStatus: status };
+        }
         // Prod
     }
 };
