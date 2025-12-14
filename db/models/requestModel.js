@@ -43,7 +43,12 @@ export async function newCreateRequest(customer_id, technician_id, product, bran
 //Hizmeti fiyatını değiştirir
 export async function setRequestPrice(request_id, price) {
     const [rows] = await pool.query(`UPDATE request_details SET price = ? WHERE request_id = ?`, [price, request_id]);
-
+    const [] = await pool.query(`UPDATE service_requests 
+    SET request_status_id = CASE 
+        WHEN request_status_id = 1 THEN 4 
+        ELSE 1 
+    END 
+    WHERE id = ?`, [request_id]);
     return rows;
 }
 
@@ -52,6 +57,14 @@ export async function setRequestStatus_DEALOK(request_id) {
     const [rows] = await pool.query(`UPDATE service_requests SET request_status_id = 2 WHERE id = ?`, [request_id]);
 
     return rows;
+}
+
+export async function deleteRequest(request_id) {
+    const [result] = await pool.query(
+        `DELETE FROM service_requests WHERE id = ?`,
+        [request_id]
+    );
+    return result;
 }
 
 //Hizmeti 'tamamlandı' yapar
@@ -93,8 +106,8 @@ export async function getAllRequestsByCustomerID(customer_id) {
 //Teknikerin tüm servis taleperini getirir
 export async function getAllRequestsByTechnicianID(tech_id) {
     const [rows] = await pool.query(
-        `SELECT * FROM service_requests 
-        WHERE technician_id = ?`,
+        `SELECT * FROM service_requests
+        WHERE technician_id = ? `,
         [tech_id]
     );
 

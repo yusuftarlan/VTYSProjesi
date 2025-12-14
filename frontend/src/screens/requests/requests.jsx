@@ -146,10 +146,12 @@ const RequestsScreen = () => {
 const ActiveRequestCard = ({ request, onUpdate, onOpenChat }) => {
     const [priceInput, setPriceInput] = useState(request.price || '');
     const isPriceChanged = Number(priceInput) !== Number(request.price);
-
+    
     const handleAcceptOrOffer = async () => {
         const action = isPriceChanged ? 'new_offer' : 'accept';
+        console.log("İşlem yapılacak ID:", request.id);
         try {
+            
             await requestService.updateRequestStatus(request.id, action, priceInput);
             alert(isPriceChanged ? "Yeni teklif gönderildi." : "Teklif kabul edildi.");
             onUpdate();
@@ -185,7 +187,7 @@ const ActiveRequestCard = ({ request, onUpdate, onOpenChat }) => {
                     </div>
                     {request.messages && request.messages.length > 0 ? (
                         <div className="last-msg-preview">
-                            <span className="sender">{request.messages[request.messages.length - 1].senderName}: </span>
+                            <span className="sender">{request.technician_name}: </span>
                             <span className="text">{request.messages[request.messages.length - 1].content.substring(0, 40)}...</span>
                         </div>
                     ) : (
@@ -202,7 +204,7 @@ const ActiveRequestCard = ({ request, onUpdate, onOpenChat }) => {
                 </div>
             )}
 
-            {request.status === 'offer_received' && (
+            {request.status === 'counter_offer' && (
                 <div className="req-footer action-mode">
                     <div className="price-control">
                         <label>Fiyat (TL):</label>
@@ -241,11 +243,14 @@ const ActiveRequestCard = ({ request, onUpdate, onOpenChat }) => {
 const CompletedRequestCard = ({ request, onUpdate, onOpenComplaint }) => {
     const [score, setScore] = useState(request.service_score || 0);
     const [hover, setHover] = useState(0);
+    const isRated = score > 0;
+    
 
     const handleRate = async (newScore) => {
-        if (!request.service_score) {
-            setScore(newScore);
-            await requestService.rateTechnician(request.id, newScore);
+        if (!isRated) {
+            setScore(newScore); 
+            await requestService.rateTechnician(request.id, newScore , request.technician_id ); 
+            onUpdate();
         }
     };
 
@@ -283,7 +288,7 @@ const CompletedRequestCard = ({ request, onUpdate, onOpenComplaint }) => {
                                 onClick={() => handleRate(index)}
                                 onMouseEnter={() => !request.service_score && setHover(index)}
                                 onMouseLeave={() => !request.service_score && setHover(score)}
-                                disabled={!!request.service_score}
+                                disabled={isRated}
                                 style={{ cursor: request.service_score ? 'default' : 'pointer' }}
                             >
                                 <span className="star">&#9733;</span>

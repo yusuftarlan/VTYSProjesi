@@ -15,6 +15,7 @@ const AdminComplaints = () => {
         setLoading(true);
         try {
             const data = await requestService.getAllComplaintsForAdmin();
+            console.log('API Response:', data);
             setComplaints(data);
         } catch (error) {
             console.error(error);
@@ -42,8 +43,8 @@ const AdminComplaints = () => {
 
             {loading ? <div style={{ textAlign: 'center' }}>Yükleniyor...</div> : (
                 <div className="requests-container">
-                    {complaints.length === 0 ? <p className="empty-msg">Henüz şikayet yok.</p> :
-                        complaints.map(comp => (
+                    {(complaints || []).length === 0 ? <p className="empty-msg">Henüz şikayet yok.</p> :
+                        (complaints || []).map(comp => (
                             <AdminComplaintCard
                                 key={comp.id}
                                 complaint={comp}

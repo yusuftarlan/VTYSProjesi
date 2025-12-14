@@ -35,7 +35,7 @@ const TechnicianHome = () => {
             setIsAvailable(data.isAvailable);
 
             // İşleri statülerine göre ayır
-            setIncomingJobs(data.jobs.filter(j => j.status_id === 1));
+            setIncomingJobs(data.jobs.filter(j => j.status_id === 1 || j.status_id === 4));
             setOngoingJobs(data.jobs.filter(j => j.status_id === 2));
             setCompletedJobs(data.jobs.filter(j => j.status_id === 3));
 
@@ -53,7 +53,8 @@ const TechnicianHome = () => {
     // Müsaitlik Değiştirme
     const handleToggleAvailability = async () => {
         try {
-            const newStatus = !isAvailable;
+           
+            const newStatus = !isAvailable ? 1 : 0;
             await requestService.toggleAvailability(newStatus);
             setIsAvailable(newStatus);
         } catch (error) {
@@ -65,7 +66,7 @@ const TechnicianHome = () => {
     const handleGiveOffer = async (id, price) => {
         if (!price) return alert("Lütfen bir fiyat giriniz.");
         try {
-            await requestService.updateRequestStatus(id, 'offer_price', price);
+            await requestService.updateRequestStatus(id, 'new_offer', price);
             alert("Teklif iletildi, müşteri onayı bekleniyor.");
             fetchData();
         } catch (error) {
@@ -216,14 +217,14 @@ const JobCard = ({ job, type, onOffer, onComplete, onChat }) => {
                             placeholder="Fiyat (TL)"
                             value={offerPrice}
                             onChange={(e) => setOfferPrice(e.target.value)}
-                            disabled={!!job.price_offer} // Fiyat verildiyse kitleyelim
+                            disabled={job.status_id === 4} // Fiyat verildiyse kitleyelim
                         />
                         <button
                             className="btn-action btn-offer"
                             onClick={() => onOffer(job.id, offerPrice)}
-                            disabled={!!job.price_offer}
+                            disabled={job.status_id === 4}
                         >
-                            {job.price_offer ? 'Teklif İletildi' : 'Teklif Ver'}
+                            {job.status_id === 4 ? 'Teklif İletildi' : 'Teklif Ver'}
                         </button>
                     </div>
                 )}

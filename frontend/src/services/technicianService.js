@@ -114,6 +114,10 @@ export const technicianService = {
 
             return techs;
         }
-        // Prod API...
+        const params = new URLSearchParams(filters);
+        const response = await fetch(`${API_URL}/admin/technicians-stats`, { 
+            credentials: 'include' 
+        });
+        return await response.json();
     }
 };

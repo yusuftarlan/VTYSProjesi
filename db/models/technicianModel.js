@@ -86,8 +86,8 @@ export async function getDistinctProfessions() {
     return rows;
 }
 
-export async function setTechnicianAvailable(id) {
-    const [result] = await pool.query(`UPDATE technician_details SET availability_status=1 WHERE technician_id=?`, [id]);
+export async function setTechnicianAvailable(id , status) {
+    const [result] = await pool.query(`UPDATE technician_details SET availability_status=? WHERE technician_id=?`, [status , id]);
 
     return result;
 }
@@ -106,6 +106,7 @@ export async function setTechnicianScore(tech_id, score) {
 
     return result;
 }
+
 export async function updateTechnicianScore(tech_id) {
     const [result] = await pool.query(
         `UPDATE technician_details AS t 
@@ -227,9 +228,7 @@ export async function getAllTechniciansTenTimesGetComplained() {
 //Bir ustanın tüm hizmet bilgilerini getirir
 export async function getTechnicianRequests(tech_id) {
     const [result] = await pool.query(
-        `SELECT s.id, u.first_name, u.surname, 
-        p.product_name, pm.brand, pm.model_code,
-        s.request_date, rs.name, s.service_score, d.detail, d.price
+        `SELECT s.id , u.first_name, u.surname, u.home_address , u.tel_no , p.product_name, pm.brand, pm.model_code, s.request_date, rs.name, s.service_score, d.detail, d.price , s.request_status_id
         FROM service_requests as s 
         JOIN technician_details as t ON s.technician_id = t.technician_id
         JOIN users as u ON s.customer_id = u.id
@@ -272,4 +271,38 @@ export async function getTechnicianComplainCount(tech_id) {
         [tech_id]
     );
     return result;
+}
+
+export async function getTechniciansWithComplaintStats(filters = {}) {
+   
+    let sql = `
+        SELECT 
+            t.*, 
+            u.first_name, 
+            u.surname, 
+            u.home_address,
+            COUNT(c.id) AS complaint_count
+        FROM technician_details t
+        JOIN users u ON t.technician_id = u.id
+        LEFT JOIN service_requests sr ON t.technician_id = sr.technician_id
+        LEFT JOIN complaints c ON sr.id = c.request_id
+        WHERE u.role_id = 1
+    `;
+
+    const params = [];
+
+    
+    if (filters && filters.q) {
+        sql += ` AND (u.first_name LIKE ? OR u.surname LIKE ? OR t.profession LIKE ?)`;
+        const searchTerm = `%${filters.q}%`;
+        params.push(searchTerm, searchTerm, searchTerm);
+    }
+
+    
+    sql += ` GROUP BY t.technician_id, u.id, u.first_name, u.surname, u.home_address`;
+
+    sql += ` ORDER BY complaint_count DESC`;
+
+    const [rows] = await pool.query(sql, params);
+    return rows;
 }

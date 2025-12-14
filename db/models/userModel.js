@@ -64,8 +64,8 @@ export async function getUsersNoAnyRequest() {
 //Müşterinin tüm talep bilgilerini döndürür
 export async function getAllServiceRequestsByCustomerID(customer_id) {
     const [result] = await pool.query(
-        `SELECT t.profession ,p.product_name, pm.brand, pm.model_code , CONCAT(u.first_name, ' ', u.surname) AS technician_name,
-        rs.name, rd.price
+        `SELECT sr.id , t.profession , sr.request_status_id ,p.product_name, pm.brand, pm.model_code , CONCAT(u.first_name, ' ', u.surname) AS technician_name,
+        rs.name, rd.price , sr.service_score , sr.technician_id
         FROM service_requests as sr
         JOIN product_models as pm ON sr.model_id = pm.id
         JOIN products as p ON pm.product_id = p.id

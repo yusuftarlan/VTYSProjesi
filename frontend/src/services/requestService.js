@@ -165,7 +165,7 @@ export const requestService = {
     },
 
     // 4. Teknisyen poanlama
-    rateTechnician: async (requestId, score) => {
+    rateTechnician: async (requestId, score , technician_id) => {
         if (IS_DEV) {
             const requests = getMockRequests();
             const req = requests.find(r => r.id === requestId);
@@ -175,12 +175,12 @@ export const requestService = {
             }
             return { success: true };
         }
-
+        
         // Prod
         const response = await fetch(`${API_URL}/requests/${requestId}/rate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ score }),
+            body: JSON.stringify({ score , technician_id }),
             credentials: 'include'
         });
         return await response.json();
@@ -286,7 +286,16 @@ export const requestService = {
             }).reverse();
         }
 
-        // Prod
+        const response = await fetch(`${API_URL}/complaints/my-complaints`, {
+            method: 'GET',
+            credentials: 'include' // Cookie gönderimi için şart
+        });
+
+        // EĞER CEVAP BAŞARISIZSA (401, 500 vb.) HATA FIRLAT
+        if (!response.ok) {
+            throw new Error('Talepler çekilemedi');
+        }
+        return await response.json();
     },
 
     getTechnicianRequests: async () => {
@@ -353,6 +362,12 @@ export const requestService = {
         }
 
         // Prod 
+        const response = await fetch(`${API_URL}/requests/technician-jobs`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error('İşler çekilemedi');
+        return await response.json();
     },
 
     updateRequestStatus: async (requestId, action, payload = null) => {
@@ -370,7 +385,7 @@ export const requestService = {
                 }
                 // Usta Fiyat Teklifi Verme
                 else if (action === 'offer_price') {
-                    requests[index].price_offer = parseFloat(payload);
+                    requests[index].price = parseFloat(payload);
                     // Status hala 1 kalır, müşteri onayı beklenir
                 }
                 // İşi Tamamlama
@@ -382,7 +397,21 @@ export const requestService = {
             }
             return { success: true };
         }
-        // Prod
+        const response = await fetch(`${API_URL}/requests/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                requestId: requestId,
+                action: action, 
+                newPrice: payload 
+            }),
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error('İşlem gerçekleştirilemedi');
+        }
+        return await response.json();
     },
 
     toggleAvailability: async (status) => {
@@ -400,6 +429,13 @@ export const requestService = {
             return { success: true, newStatus: status };
         }
         // Prod
+        const response = await fetch(`${API_URL}/technicians/availability`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status : status }),
+            credentials: 'include'
+        });
+        return await response.json();
     },
 
     getAllComplaintsForAdmin: async () => {
@@ -427,7 +463,13 @@ export const requestService = {
                 };
             }).reverse();
         }
-        // Prod API...
+        const response = await fetch(`${API_URL}/admin/complaints`, {
+            method: 'GET',
+            credentials: 'include'
+        }
+        
+    );
+        return await response.json();
     },
 
     resolveComplaint: async (complaintId, responseText) => {
@@ -445,6 +487,12 @@ export const requestService = {
             }
             return { success: true };
         }
-        // Prod API...
+        const response = await fetch(`${API_URL}/admin/complaints/${complaintId}/resolve`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ response: responseText }),
+            credentials: 'include'
+        });
+        return await response.json();
     }
 };

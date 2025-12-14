@@ -83,15 +83,14 @@ export const login = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        // Role ID 1 ise Teknisyendir
-        const isTechnician = user.role_id === 1;
+       
 
         res.json({
             success: true,
             user: {
                 id: user.id,
                 name: user.first_name,
-                isTechnician: isTechnician
+                role_id: user.role_id
             }
         });
 
@@ -265,12 +264,14 @@ export const getCustomerRequests = async (req, res) => {
             }));
 
             let uiStatus = 'waiting_offer';
-            if (req.request_status_id === 3) uiStatus = 'completed';
-            else if (req.request_status_id === 2) uiStatus = 'agreed';
-            else if (req.request_status_id === 1 && req.price) uiStatus = 'offer_received';
+            if (req.request_status_id == 3) uiStatus = 'completed';
+            else if (req.request_status_id == 4) uiStatus = 'counter_offer';
+            else if (req.request_status_id == 2) uiStatus = 'agreed';
+            else if (req.request_status_id == 1) uiStatus = 'waiting_offer';
 
             return {
                 id: req.id,
+                technician_id:req.technician_id,
                 technician_name: req.technician_name,
                 profession: req.profession,
                 date: req.request_date,
@@ -293,16 +294,18 @@ export const getCustomerRequests = async (req, res) => {
 // 3. Durum Güncelleme
 export const updateRequestStatus = async (req, res) => {
     try {
-        const requestId = req.params.id;
-        const { action, newPrice } = req.body;
+        
+        const {requestId, action, newPrice } = req.body;
 
         if (action === 'accept') {
             await requestModel.setRequestStatus_DEALOK(requestId);
         } else if (action === 'new_offer') {
             await requestModel.setRequestPrice(requestId, newPrice);
         } else if (action === 'reject') {
+            await requestModel.deleteRequest(requestId);
+        } else if (action === 'complete_job') {
             await requestModel.setRequestStatus_COMPLETED(requestId);
-        }
+        } 
 
         res.json({ success: true });
     } catch (error) {
@@ -315,8 +318,9 @@ export const updateRequestStatus = async (req, res) => {
 export const rateTechnician = async (req, res) => {
     try {
         const requestId = req.params.id;
-        const { score } = req.body;
+        const { score , technician_id } = req.body;
         await requestModel.setServiceScore(requestId, score);
+        await technicianModel.updateTechnicianScore(technician_id);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ message: "Puanlanamadı" });
@@ -345,9 +349,151 @@ export const sendMessage = async (req, res) => {
 export const createComplaint = async (req, res) => {
     try {
         const { request_id, message } = req.body;
-        await complaintModel.createComplain(request_id, message);
+        await complainsModel.createComplain(request_id, message);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ message: "Şikayet oluşturulamadı" });
+    }
+};
+
+
+export const getCustomerComplaints = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        if (!session) return res.status(401).json({ message: "Yetkisiz" });
+
+        // Modelde join yapıp usta ismini de getirdiğimizi varsayıyoruz
+        const complaints = await complainsModel.getComplainsByUserId(session.user_id);
+        
+        res.json(complaints);
+    } catch (error) {
+        console.error("Get Complaints Error:", error);
+        res.status(500).json({ message: "Şikayetler alınamadı" });
+    }
+};
+
+
+
+
+export const getTechnicianRequests = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        if (!session || session.role_id !== 1) return res.status(403).json({ message: "Yetkisiz erişim" });
+
+        // Ustanın işlerini, müşteri detaylarıyla birlikte getiren SQL fonksiyonu
+        const jobs = await technicianModel.getTechnicianRequests(session.user_id);
+        
+        // Ustanın müsaitlik durumu
+        const techDetail = await technicianModel.getTechnicianDetailByID(session.user_id);
+        const isAvailable = techDetail ? techDetail.availability_status : false;
+
+        // Mesajları her iş için ekleyelim
+        const mappedJobs = await Promise.all(jobs.map(async (job) => {
+            const messages = await messageModel.getAllMessagesByServiceId(job.id);
+            const formattedMessages = messages.map(m => ({
+                id: m.id,
+                content: m.message,
+                date: m.date,
+                senderName: m.sender_id === session.user_id ? "Ben" : "Müşteri",
+                isMe: m.sender_id === session.user_id
+            }));
+
+            return {
+                id: job.id,
+                customer_name: `${job.first_name} ${job.surname}`,
+                customer_address: job.home_address,
+                customer_phone: job.tel_phone,
+                date: new Date(job.request_date).toLocaleDateString('tr-TR'),
+                status_id: job.request_status_id,
+                price_offer: job.price,
+                details: job.detail || `${job.brand} ${job.product_name}`,
+                messages: formattedMessages
+            };
+        }));
+
+        res.json({ jobs: mappedJobs.reverse(), isAvailable });
+
+    } catch (error) {
+        console.error("Get Tech Jobs Error:", error);
+        res.status(500).json({ message: "İşler alınamadı" });
+    }
+};
+
+// 9. Teknisyen Müsaitlik Değiştir
+export const toggleAvailability = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        if (!session || session.role_id !== 1) return res.status(403).json({ message: "Yetkisiz" });
+
+        const { status } = req.body; // true/false
+        await technicianModel.setTechnicianAvailable(session.user_id, status);
+
+        res.json({ success: true, newStatus: status });
+    } catch (error) {
+        res.status(500).json({ message: "Durum güncellenemedi" });
+    }
+};
+
+// --- ADMIN İŞLEMLERİ ---
+
+export const getAllComplaintsForAdmin = async (req, res) => {
+    try {
+        // Burada admin kontrolü yapılmalı, şimdilik geçiyorum
+        const complaints = await complainsModel.getAllNonClosedComplain();
+        const formattedData = complaints.map(row => ({
+            id: row.id,
+            request_id: row.request_id,
+            technician_name: `${row.t_name} ${row.t_surname}`, 
+            customer_name: `${row.c_name} ${row.c_surname}`,   
+            message: row.message,
+            response: row.response,
+            status: row.status,
+            date: new Date(row.created_at).toLocaleDateString('tr-TR'), 
+            resolved_date: row.resolved_at ? new Date(row.resolved_at).toLocaleDateString('tr-TR') : null
+        }));
+
+        res.json(formattedData);
+    } catch (error) {
+        res.status(500).json({ message: "Şikayetler alınamadı" });
+    }
+};
+
+export const resolveComplaint = async (req, res) => {
+    try {
+        const token = req.cookies.access_token;
+        const session = await cookiesModel.getCookieByToken(token);
+        const complaintId = req.params.id;
+        const { response } = req.body;
+        
+        // Çözüldü olarak işaretle ve yanıtı kaydet
+        await complainsModel.respondToComplaint(complaintId, response , session.user_id);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ message: "İşlem başarısız" });
+    }
+};
+
+export const getTechniciansWithStats = async (req, res) => {
+    try {
+        // İstatistikli liste getiren complex SQL sorgusu
+        const techs = await technicianModel.getTechniciansWithComplaintStats();
+        
+        // Query ile basit arama filtresi
+        const q = req.query.q ? req.query.q.toLowerCase() : null;
+        let filteredTechs = techs;
+        
+        if (q) {
+            filteredTechs = techs.filter(t => 
+                t.first_name.toLowerCase().includes(q) || 
+                t.surname.toLowerCase().includes(q)
+            );
+        }
+        
+        res.json(filteredTechs);
+    } catch (error) {
+        res.status(500).json({ message: "Veri alınamadı" });
     }
 };
