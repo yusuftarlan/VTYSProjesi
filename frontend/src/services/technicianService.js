@@ -1,4 +1,4 @@
-import { API_URL, IS_DEV, getMockUsers, getMockDetails, getMockProducts, getMockProductModels } from './mockDb';
+import { API_URL, IS_DEV, getMockUsers, getMockDetails, getMockProducts, getMockProductModels, getMockRequests, getMockComplaints } from './mockDb';
 
 export const technicianService = {
     // 1. Teknisyenleri getir
@@ -128,5 +128,24 @@ export const technicianService = {
             credentials: 'include'
         });
         return await response.json();
+    }
+    ,
+
+    deleteTechnician: async (technicianId) => {
+        if (IS_DEV) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const users = getMockUsers();
+            const index = users.findIndex(u => u.id === technicianId);
+
+            if (index !== -1) {
+                users.splice(index, 1);
+                if (typeof saveMockUsers === 'function') {
+                    saveMockUsers(users);
+                }
+            }
+            return { success: true };
+        }
+
+        // Prod
     }
 };

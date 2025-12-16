@@ -118,3 +118,129 @@
 .active-border {
     border-left: 4px solid #e74c3c;
 }
+
+/* Ana Liste Konteyneri - Dikey Akış */
+.tech-list-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 10px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Tekil Satır Kartı */
+.tech-row-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tech-row-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--sub-text);
+}
+
+/* Sol Taraf Bilgileri */
+.tech-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tech-main-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.tech-main-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.profession-badge {
+    background-color: var(--input-bg);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    color: var(--sub-text);
+    border: 1px solid var(--input-border);
+}
+
+/* İstatistik Hapları (Pills) */
+.tech-mini-stats {
+    display: flex;
+    gap: 10px;
+}
+
+.stat-pill {
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.dark-mode .stat-pill {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.stat-pill.star {
+    color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+.stat-pill.bad {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.stat-pill.good {
+    color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+/* Sağ Taraf - Silme Butonu */
+.btn-ban {
+    background-color: transparent;
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.btn-ban:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Mobilde Alt Alta Geçiş */
+@media (max-width: 600px) {
+    .tech-row-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .tech-action-section {
+        width: 100%;
+        text-align: right;
+    }
+
+    .btn-ban {
+        width: 100%;
+    }
+}

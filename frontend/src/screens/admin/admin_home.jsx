@@ -32,6 +32,20 @@ const AdminHome = () => {
         }
     };
 
+    const handleDeleteTechnician = async (techId, techName) => {
+        if (window.confirm(`${techName} isimli ustayı sistemden silmek/atmak istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
+            try {
+                await technicianService.deleteTechnician(techId);
+                // Listeden düşür
+                setTechnicians(prev => prev.filter(t => t.id !== techId));
+                alert("Usta başarıyla silindi.");
+            } catch (error) {
+                console.error("Silme hatası:", error);
+                alert("Silme işlemi sırasında bir hata oluştu.");
+            }
+        }
+    };
+
     useEffect(() => {
         fetchTechs();
     }, [searchQuery]); // Arama değişince tetikle
@@ -76,30 +90,40 @@ const AdminHome = () => {
                 />
             </div>
 
-            {/* Liste */}
-            {loading ? <div style={{ textAlign: 'center' }}>Yükleniyor...</div> : (
-                <div className="tech-list-admin">
+            {/* Liste  */}
+            {loading ? <div style={{ textAlign: 'center', padding: '20px' }}>Yükleniyor...</div> : (
+                <div className="tech-list-vertical">
                     {technicians.length === 0 ? <p className="empty-msg">Kayıt bulunamadı.</p> :
                         technicians.map(tech => (
-                            <div key={tech.id} className="tech-card admin-card">
-                                <div className="admin-card-header">
-                                    <h3>{tech.first_name} {tech.surname}</h3>
-                                    <span className="profession-badge">{tech.profession || 'Belirsiz'}</span>
+                            <div key={tech.id} className="tech-row-card">
+                                {/* Sol Taraf: Bilgiler */}
+                                <div className="tech-info-section">
+                                    <div className="tech-main-info">
+                                        <h3>{tech.first_name} {tech.surname}</h3>
+                                        <span className="profession-badge">{tech.profession || 'Belirsiz'}</span>
+                                    </div>
+
+                                    <div className="tech-mini-stats">
+                                        <span title="Puan" className="stat-pill star">
+                                            ★ {tech.technician_score}
+                                        </span>
+                                        <span title="Deneyim" className="stat-pill">
+                                            {tech.experience_years} Yıl
+                                        </span>
+                                        <span title="Şikayet Sayısı" className={`stat-pill ${tech.complaint_count > 0 ? 'bad' : 'good'}`}>
+                                            {tech.complaint_count} Şikayet
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="admin-stats">
-                                    <div className="stat-box">
-                                        <span className="stat-label">Puan</span>
-                                        <span className="stat-val star-color">★ {tech.technician_score}</span>
-                                    </div>
-                                    <div className="stat-box">
-                                        <span className="stat-label">Deneyim</span>
-                                        <span className="stat-val">{tech.experience_years} Yıl</span>
-                                    </div>
-                                    <div className={`stat-box ${tech.complaint_count > 0 ? 'alert-box' : 'safe-box'}`}>
-                                        <span className="stat-label">Şikayet Sayısı</span>
-                                        <span className="stat-val">{tech.complaint_count}</span>
-                                    </div>
+                                {/* Sağ Taraf: Aksiyonlar */}
+                                <div className="tech-action-section">
+                                    <button
+                                        className="btn-ban"
+                                        onClick={() => handleDeleteTechnician(tech.id, `${tech.first_name} ${tech.surname}`)}
+                                    >
+                                        Siteden At 🚫
+                                    </button>
                                 </div>
                             </div>
                         ))
