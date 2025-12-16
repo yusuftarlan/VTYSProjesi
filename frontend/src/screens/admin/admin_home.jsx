@@ -35,6 +35,7 @@ const AdminHome = () => {
     const handleDeleteTechnician = async (techId, techName) => {
         if (window.confirm(`${techName} isimli ustayı sistemden silmek/atmak istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
             try {
+                console.log(techId);
                 await technicianService.deleteTechnician(techId);
                 // Listeden düşür
                 setTechnicians(prev => prev.filter(t => t.id !== techId));

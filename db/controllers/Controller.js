@@ -165,6 +165,22 @@ export const getTechnicians = async (req, res) => {
     }
 };
 
+export const getTechniciansWithStats = async (req, res) => {
+     try {
+        
+        const filters = {
+            q: req.query.q,
+        };
+
+        const technicians = await technicianModel.getTechniciansWithComplaintStats(filters);
+        res.json(technicians);
+
+    } catch (error) {
+        console.error("Get Technicians Error:", error);
+        res.status(500).json({ message: "Sunucu hatası" });
+    }
+};
+
 // Uzmanlık Listesini Getir
 export const getProfessions = async (req, res) => {
     try {
@@ -193,7 +209,15 @@ export const getProductTypes = async (req, res) => {
 
 export const getBrands = async (req, res) => {
     try {
-        const rows = await productModel.getAllBrands();
+
+        const productName = req.query.q;
+
+        let rows;
+        if (productName) {
+            rows = await productModel.getAllBrandsByProductName(productName);
+        } else {
+            rows = await productModel.getAllBrands(); 
+        }
        
         const brands = rows.map(row => row.brand);
         res.json(brands);
@@ -476,24 +500,21 @@ export const resolveComplaint = async (req, res) => {
     }
 };
 
-export const getTechniciansWithStats = async (req, res) => {
+
+export const deleteTechnician = async (req, res) => {
     try {
-        // İstatistikli liste getiren complex SQL sorgusu
-        const techs = await technicianModel.getTechniciansWithComplaintStats();
         
-        // Query ile basit arama filtresi
-        const q = req.query.q ? req.query.q.toLowerCase() : null;
-        let filteredTechs = techs;
+        const {technicianId} = req.body;
+
+            await technicianModel.deleteTechnician(technicianId);
         
-        if (q) {
-            filteredTechs = techs.filter(t => 
-                t.first_name.toLowerCase().includes(q) || 
-                t.surname.toLowerCase().includes(q)
-            );
-        }
         
-        res.json(filteredTechs);
+        res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ message: "Veri alınamadı" });
+        console.error("Update Status Error:", error);
+        res.status(500).json({ message: "Güncellenemedi" });
     }
 };
+
+
+

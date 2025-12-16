@@ -64,10 +64,7 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
             try {
                 // Servise git ve ürün adına göre modelleri çek
                 const data = await technicianService.getModels(selectedName);
-
-                // Gelen modellerden sadece markaları ayıkla (Unique)
-                const brands = [...new Set(data.map(m => m.brand))];
-                setBrandList(brands.sort());
+                setBrandList(data.sort());
             } catch (error) {
                 console.error("Markalar getirilemedi:", error);
             }
@@ -172,7 +169,7 @@ const AppointmentPopup = ({ technician, onClose, onSuccess }) => {
                             className="form-input"
                             onChange={handleBrandSelect}
                             value={isCustomBrand ? 'OTHER_OPTION' : formData.brand}
-                            disabled={!formData.productName || isCustomProduct || brandList.length === 0}
+                            disabled={!isCustomProduct && (!formData.productName || brandList.length === 0)}
                             style={{ width: '100%', padding: '10px', marginBottom: '5px' }}
                         >
                             <option value="">

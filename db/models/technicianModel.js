@@ -16,6 +16,14 @@ export async function createTechnicianDetail(tech_id, profession, experience_yea
     return result;
 }
 
+export async function deleteTechnician(tech_id) {
+    const [result] = await pool.query(
+        `UPDATE users SET role_id = 4 WHERE id = ?`,
+        [tech_id]
+    );
+    return result;
+}
+
 export async function getTechniciansWithFilters(filters) {
     // Role ID = 1 olan (Teknisyen) kullanıcıları ve detaylarını çek
     let sql = `
@@ -29,7 +37,7 @@ export async function getTechniciansWithFilters(filters) {
     // 1. İsim Arama (Ad veya Soyad)
     if (filters.q) {
         sql += ` AND (u.first_name LIKE ? OR u.surname LIKE ?)`;
-        const searchTerm = `%${filters.q}%`;
+        const searchTerm = `${filters.q}%`;
         params.push(searchTerm, searchTerm, searchTerm);
     }
 
@@ -277,7 +285,8 @@ export async function getTechniciansWithComplaintStats(filters = {}) {
    
     let sql = `
         SELECT 
-            t.*, 
+            t.*,
+            u.id, 
             u.first_name, 
             u.surname, 
             u.home_address,
@@ -294,7 +303,7 @@ export async function getTechniciansWithComplaintStats(filters = {}) {
     
     if (filters && filters.q) {
         sql += ` AND (u.first_name LIKE ? OR u.surname LIKE ? OR t.profession LIKE ?)`;
-        const searchTerm = `%${filters.q}%`;
+        const searchTerm = `${filters.q}%`;
         params.push(searchTerm, searchTerm, searchTerm);
     }
 

@@ -18,6 +18,7 @@ router.put('/admin/complaints/:id/resolve', Controller.resolveComplaint);
 router.get('/admin/technicians-stats', Controller.getTechniciansWithStats);
 router.get('/requests/technician-jobs', Controller.getTechnicianRequests); 
 router.put('/technicians/availability', Controller.toggleAvailability);
+router.put('/delete/tech', Controller.deleteTechnician);
 router.put('/requests/status', Controller.updateRequestStatus);
 
 export default router;

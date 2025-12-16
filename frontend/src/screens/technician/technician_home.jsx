@@ -63,16 +63,7 @@ const TechnicianHome = () => {
     };
 
     // Fiyat Teklifi Ver
-    const handleGiveOffer = async (id, price) => {
-        if (!price) return alert("Lütfen bir fiyat giriniz.");
-        try {
-            await requestService.updateRequestStatus(id, 'new_offer', price);
-            alert("Teklif iletildi, müşteri onayı bekleniyor.");
-            fetchData();
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    
 
     // İşi Tamamla
     const handleCompleteJob = async (id) => {
@@ -129,7 +120,6 @@ const TechnicianHome = () => {
                                         key={job.id}
                                         job={job}
                                         type="new"
-                                        onOffer={handleGiveOffer}
                                         onChat={() => setSelectedChatRequest({ ...job, technician_name: job.customer_name })}
                                     />
                                 ))
@@ -188,8 +178,22 @@ const TechnicianHome = () => {
     );
 };
 
-const JobCard = ({ job, type, onOffer, onComplete, onChat }) => {
+const JobCard = ({ job, type, fetchData , onComplete, onChat }) => {
     const [offerPrice, setOfferPrice] = useState(job.price_offer || '');
+    const isPriceChanged = Number(offerPrice) !== Number(job.price_offer);
+
+    const handleGiveOffer = async () => {
+            const action = isPriceChanged ? 'new_offer' : 'accept';
+            console.log("İşlem yapılacak ID:", job.id);
+            try {
+                
+                await requestService.updateRequestStatus(job.id, action, offerPrice);
+                alert(isPriceChanged ? "Yeni teklif gönderildi." : "Teklif kabul edildi.");
+                fetchData();
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
     return (
         <div className={`job-card border-${type}`}>
@@ -221,10 +225,15 @@ const JobCard = ({ job, type, onOffer, onComplete, onChat }) => {
                         />
                         <button
                             className="btn-action btn-offer"
-                            onClick={() => onOffer(job.id, offerPrice)}
+                            onClick={() => handleGiveOffer(job.id, offerPrice)}
                             disabled={job.status_id === 4}
                         >
-                            {job.status_id === 4 ? 'Teklif İletildi' : 'Teklif Ver'}
+                            {job.status_id === 4
+                            ? 'Teklif İletildi'
+                            : isPriceChanged
+                            ? 'Yeni Teklif Gönder'
+                            : 'Kabul Et'}
+
                         </button>
                     </div>
                 )}

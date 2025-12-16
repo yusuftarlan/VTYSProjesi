@@ -76,8 +76,13 @@ export const technicianService = {
 
             return models;
         }
+        let url = `${API_URL}/brands`;
+        if (productName) {
+            const params = new URLSearchParams({ q: productName });
+            url += `?${params.toString()}`;
+        }
 
-        const response = await fetch(`${API_URL}/brands`, { credentials: 'include' });
+        const response = await fetch(url, { credentials: 'include' });
         return await response.json();
     },
 
@@ -124,7 +129,7 @@ export const technicianService = {
             return techs;
         }
         const params = new URLSearchParams(filters);
-        const response = await fetch(`${API_URL}/admin/technicians-stats`, {
+        const response = await fetch(`${API_URL}/admin/technicians-stats?${params.toString()}`, {
             credentials: 'include'
         });
         return await response.json();
@@ -146,6 +151,18 @@ export const technicianService = {
             return { success: true };
         }
 
-        // Prod
+        const response = await fetch(`${API_URL}/delete/tech`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                technicianId: technicianId      
+            }),
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error('İşlem gerçekleştirilemedi');
+        }
+        return await response.json();
     }
 };
