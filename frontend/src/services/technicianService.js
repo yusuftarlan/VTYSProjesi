@@ -59,12 +59,21 @@ export const technicianService = {
     },
 
     // 4. Modelleri Getir 
-    getModels: async (productId = null) => {
+    getModels: async (productName = null) => {
         if (IS_DEV) {
             const models = getMockProductModels();
-            if (productId) {
-                return models.filter(m => m.product_id === parseInt(productId));
+            if (productName) {
+                const products = getMockProducts();
+                const matchedProduct = products.find(p =>
+                    (p.product_name === productName) || (p === productName)
+                );
+                if (matchedProduct && matchedProduct.id) {
+                    return models.filter(m => m.product_id === matchedProduct.id);
+                }
+
+                return [];
             }
+
             return models;
         }
 
@@ -115,8 +124,8 @@ export const technicianService = {
             return techs;
         }
         const params = new URLSearchParams(filters);
-        const response = await fetch(`${API_URL}/admin/technicians-stats`, { 
-            credentials: 'include' 
+        const response = await fetch(`${API_URL}/admin/technicians-stats`, {
+            credentials: 'include'
         });
         return await response.json();
     }
