@@ -119,144 +119,84 @@ ADD FOREIGN KEY (sender_id) REFERENCES users (id);
 INSERT INTO roles (name)
 VALUES ('technician'),
   ('customer'),
-  ('customer_support');
+  ('customer_support'),
+  ('inactive');
 INSERT INTO request_statuses (name)
 VALUES ("Başvuru Alındı"),
   ("Hizmet verilecek"),
-  ("Hizmet sağlandı");
+  ("Hizmet sağlandı"),
+  ("Karşı Teklif");
 -- 5️⃣ Users için örnek veri (role_id değerleri artık doğru)
-INSERT INTO users (
-    first_name,
-    surname,
-    email,
-    passwd,
-    tel_no,
-    home_address,
-    role_id
-  )
-VALUES (
-    'yusuf',
-    'tarlan',
-    'yusuf@hotmail.com',
-    '1234',
-    '5321112233',
-    'İstanbul',
-    3
-  ),
-  (
-    'Ahmet',
-    'Yılmaz',
-    'ahmet1@hotmail.com',
-    'pass123',
-    '5321110001',
-    'İstanbul',
-    1
-  ),
-  (
-    'Ayşe',
-    'Kara',
-    'ayse2@gmail.com',
-    'pass234',
-    '5321110002',
-    'Ankara',
-    1
-  ),
-  (
-    'Mehmet',
-    'Demir',
-    'mehmet3@yahoo.com',
-    'pass345',
-    '5321110003',
-    'İzmir',
-    1
-  ),
-  (
-    'Elif',
-    'Çelik',
-    'elif4@hotmail.com',
-    'pass456',
-    '5321110004',
-    'Bursa',
-    1
-  ),
-  (
-    'Ali',
-    'Şahin',
-    'ali5@gmail.com',
-    'pass567',
-    '5321110005',
-    'Adana',
-    1
-  ),
-  (
-    'Fatma',
-    'Koç',
-    'fatma6@yahoo.com',
-    'pass568',
-    '5321110006',
-    'İstanbul',
-    2
-  ),
-  (
-    'Cem',
-    'Ak',
-    'cem7@hotmail.com',
-    'pass568',
-    '5321110007',
-    'Ankara',
-    2
-  ),
-  (
-    'Zeynep',
-    'Yıldız',
-    'zeynep8@gmail.com',
-    'pass568',
-    '5321110008',
-    'İzmir',
-    2
-  ),
-  (
-    'Okan',
-    'Polat',
-    'okan9@yahoo.com',
-    'pass568',
-    '5321110009',
-    'Bursa',
-    2
-  ),
-  (
-    'Selin',
-    'Arslan',
-    'selin10@hotmail.com',
-    'pass568',
-    '5321110010',
-    'Adana',
-    2
-  );
-INSERT INTO technician_details (
-    technician_id,
-    profession,
-    technician_score,
-    experience_years,
-    availability_status
-  )
-VALUES (2, 'Elektrik Teknisyeni', 4.75, 8, TRUE),
-  (3, 'Klima Bakım Uzmanı', 4.20, 5, TRUE),
-  (4, 'Bilgisayar Teknisyeni', 3.90, 3, FALSE),
-  (
-    5,
-    'Beyaz Eşya Servis Teknisyeni',
-    4.55,
-    10,
-    TRUE
-  ),
-  (
-    6,
-    'Güvenlik Sistemleri Teknisyeni',
-    4.10,
-    6,
-    FALSE
-  );
+SET @sifre = '$2b$10$tVI9dVAPDlJGLgH4cppL4esiYStwH2b/uPfMHDlX6x2U.wMOJnZNW';
+
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Ali', 'Yılmaz', 'yilmaz@mail.com', @sifre, '05551000001', 'Kadıköy, İstanbul', 3);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Elektrikçi', 4.8, 12, 1);
+
+-- 2. Mehmet Demir (Su Tesisatçısı - Ankara)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Mehmet', 'Demir', 'mehmet.demir@mail.com', @sifre, '05551000002', 'Çankaya, Ankara', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Su Tesisatçısı', 4.5, 8, 1);
+
+-- 3. Ayşe Kaya (Beyaz Eşya - İzmir)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Ayşe', 'Kaya', 'ayse.kaya@mail.com', @sifre, '05551000003', 'Karşıyaka, İzmir', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Beyaz Eşya Servisi', 4.9, 5, 1);
+
+-- 4. Ali Vural (Boya Badana - Bursa)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Ali', 'Vural', 'ali.vural@mail.com', @sifre, '05551000004', 'Nilüfer, Bursa', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Boya Badana', 4.2, 15, 1);
+
+-- 5. Zeynep Çelik (Kombi Servisi - İstanbul)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Zeynep', 'Çelik', 'zeynep.celik@mail.com', @sifre, '05551000005', 'Ümraniye, İstanbul', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Kombi Servisi', 4.7, 6, 0); -- Şu an meşgul
+
+-- 6. Mustafa Öztürk (Marangoz - Antalya)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Mustafa', 'Öztürk', 'mustafa.ozturk@mail.com', @sifre, '05551000006', 'Muratpaşa, Antalya', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Marangoz', 4.6, 20, 1);
+
+-- 7. Fatma Şahin (Temizlik - Adana)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Fatma', 'Şahin', 'fatma.sahin@mail.com', @sifre, '05551000007', 'Seyhan, Adana', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Temizlik Hizmetleri', 4.4, 3, 1);
+
+-- 8. Burak Yıldız (Bilgisayar Tamiri - İstanbul)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Burak', 'Yıldız', 'burak.yildiz@mail.com', @sifre, '05551000008', 'Beşiktaş, İstanbul', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Bilgisayar Tamiri', 5.0, 4, 1);
+
+-- 9. Esra Koç (Klima Servisi - Mersin)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Esra', 'Koç', 'esra.koc@mail.com', @sifre, '05551000009', 'Yenişehir, Mersin', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Klima Servisi', 4.3, 7, 1);
+
+-- 10. Caner Erkin (Çilingir - İstanbul)
+INSERT INTO users (first_name, surname, email, passwd, tel_no, home_address, role_id)
+VALUES ('Caner', 'Erkin', 'caner.erkin@mail.com', @sifre, '05551000010', 'Fatih, İstanbul', 1);
+
+INSERT INTO technician_details (technician_id, profession, technician_score, experience_years, availability_status)
+VALUES (LAST_INSERT_ID(), 'Çilingir', 4.8, 10, 1);
 INSERT INTO products (product_name)
 VALUES ('Cep Telefonu'),
   ('Laptop'),
@@ -267,8 +207,7 @@ VALUES ('Cep Telefonu'),
   ('Kamera'),
   ('Bulaşık Makinesi'),
   ('Çamaşır Makinesi'),
-  ('Kombi'),
-  ('Diğer');
+  ('Kombi');
 -- Cep Telefonu (product_id = 1)
 INSERT INTO product_models (product_id, brand, model_code)
 VALUES (1, 'Apple', 'iPhone15ProMax'),
@@ -281,9 +220,6 @@ VALUES (1, 'Apple', 'iPhone15ProMax'),
   (1, 'OnePlus', '12Pro'),
   (1, 'Google', 'Pixel8Pro'),
   (1, 'Huawei', 'P60Pro');
--- Diğer product_id = 11
-INSERT INTO product_models (product_id, brand, model_code)
-VALUES (11, 'Diğer', 'Diğer');
 -- Laptop (product_id = 2)
 INSERT INTO product_models (product_id, brand, model_code)
 VALUES (2, 'Dell', 'XPS13-9310'),
