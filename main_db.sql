@@ -63,7 +63,7 @@ CREATE TABLE service_requests (
 );
 CREATE TABLE request_details (
   id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  request_id INT NOT NULL,
+  request_id INT NOT NULL UNIQUE,
   detail TEXT NOT NULL,
   price DECIMAL(10, 2) NOT NULL
 );
@@ -443,17 +443,62 @@ VALUES (
 -- Request Details için örnek veri
 INSERT INTO request_details (request_id, detail, price)
 VALUES (1, 'Ekran değişimi yapıldı', 2500.00),
-  (1, 'Batarya değişimi yapıldı', 800.00),
   (2, 'Klima gazı dolumu yapıldı', 1200.00),
-  (2, 'Filtre temizliği yapıldı', 350.00),
   (3, 'Format atıldı ve Windows kuruldu', 600.00),
   (4, 'Su pompası değişimi gerekiyor', 1500.00),
   (5, 'Lens değişimi yapılacak', 3200.00);
-
 -- Complaints için örnek veri
-INSERT INTO complaints (request_id, message, status, response, created_at, resolved_at, response_by) VALUES
-(1, 'Tamir edilen telefon 2 gün sonra tekrar bozuldu, ekran titriyor.', 'Çözüldü', 'Ücretsiz tekrar tamir yapıldı, garanti kapsamında değiştirildi.', '2025-11-19 09:00:00', '2025-11-20 14:30:00', 1),
-(2, 'Klima bakımından sonra su damlıyor, önceden böyle değildi.', 'Çözüldü', 'Teknisyen tekrar gönderildi, drenaj hattı temizlendi.', '2025-11-24 10:15:00', '2025-11-25 11:00:00', 1),
-(3, 'Format sonrası bazı dosyalarım kaybolmuş, yedekleme yapılacağı söylenmişti.', 'İnceleniyor', NULL, '2025-11-30 16:00:00', NULL, NULL),
-(4, 'Teknisyen randevu saatine gelmedi, 2 saat bekledim.', 'İnceleniyor', NULL, '2025-12-02 14:00:00', NULL, NULL),
-(5, 'Fiyat teklifi çok yüksek, başka bir serviste yarı fiyatına yapılıyor.', 'Beklemede', NULL, '2025-12-03 09:30:00', NULL, NULL);
+INSERT INTO complaints (
+    request_id,
+    message,
+    status,
+    response,
+    created_at,
+    resolved_at,
+    response_by
+  )
+VALUES (
+    1,
+    'Tamir edilen telefon 2 gün sonra tekrar bozuldu, ekran titriyor.',
+    'Çözüldü',
+    'Ücretsiz tekrar tamir yapıldı, garanti kapsamında değiştirildi.',
+    '2025-11-19 09:00:00',
+    '2025-11-20 14:30:00',
+    1
+  ),
+  (
+    2,
+    'Klima bakımından sonra su damlıyor, önceden böyle değildi.',
+    'Çözüldü',
+    'Teknisyen tekrar gönderildi, drenaj hattı temizlendi.',
+    '2025-11-24 10:15:00',
+    '2025-11-25 11:00:00',
+    1
+  ),
+  (
+    3,
+    'Format sonrası bazı dosyalarım kaybolmuş, yedekleme yapılacağı söylenmişti.',
+    'İnceleniyor',
+    NULL,
+    '2025-11-30 16:00:00',
+    NULL,
+    NULL
+  ),
+  (
+    4,
+    'Teknisyen randevu saatine gelmedi, 2 saat bekledim.',
+    'İnceleniyor',
+    NULL,
+    '2025-12-02 14:00:00',
+    NULL,
+    NULL
+  ),
+  (
+    5,
+    'Fiyat teklifi çok yüksek, başka bir serviste yarı fiyatına yapılıyor.',
+    'Beklemede',
+    NULL,
+    '2025-12-03 09:30:00',
+    NULL,
+    NULL
+  );
