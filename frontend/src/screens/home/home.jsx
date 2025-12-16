@@ -280,7 +280,15 @@ const HomeScreen = () => {
                                     <p className="tech-profession">{tech.profession}</p>
                                 </div>
                                 <div className="tech-score">
-                                    <span>★</span> {tech.technician_score}
+                                    {Number(tech.technician_score) > 0 ? (
+                                        <>
+                                            <span>★</span> {tech.technician_score}
+                                        </>
+                                    ) : (
+                                        <span style={{ fontSize: '0.8rem', color: '#333', fontWeight: 'bold' }}>
+                                            Yeni Tamirci
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
@@ -299,7 +307,7 @@ const HomeScreen = () => {
                                 {tech.availability_status ? t('home.card.available') : t('home.card.busy')}
                             </div>
 
-                            {tech.availability_status && (
+                            {tech.availability_status == 1 && (
                                 <button
                                     className="book-btn"
                                     onClick={() => handleBookClick(tech)}
