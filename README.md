@@ -15,7 +15,7 @@ Daha sonra aşağıdaki gibi frontend kalsörüne girip
    npm run dev 
    ```
 
-**Proje Mysql Ayarları **
+**Proje Mysql Ayarları**
 
 Proje Dosya konumundaki .env dosyasını doldurunuz.
 
