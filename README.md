@@ -36,9 +36,11 @@ frontend  klasöründeki .env dosyasını doldurunuz.
    ```
 
  **Tabloları ve gerekli prosedürleri oluşturma**
-
-main_db.sql dosyasında tablo oluşturma fonksiyonları ve örnek kullanıcı oluşturma sql komutları bulunmaktadır.
-procedure_db.sql dosyasında uygulamanın çalışması için gerekli prosedürler bulunmaktadır. Doğru çalışması için bu sql komutları kesinlikle mysql'de çalıştırılmalıdır.
-extra_inserts.sql dosyasında ekstra örnek veri insertleri bulunmakta isteğe bağlı kullanılabilir.
+   
+   - main_db.sql dosyasında tablo oluşturma fonksiyonları ve örnek kullanıcı oluşturma sql komutları bulunmaktadır.
+   
+   - procedure_db.sql dosyasında uygulamanın çalışması için gerekli prosedürler bulunmaktadır. Doğru çalışması için bu sql komutları kesinlikle mysql'de çalıştırılmalıdır.
+   
+   - extra_inserts.sql dosyasında ekstra örnek veri insertleri bulunmakta isteğe bağlı kullanılabilir.
 
  
